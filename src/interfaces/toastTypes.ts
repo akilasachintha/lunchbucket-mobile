@@ -1,8 +1,16 @@
 import React from "react";
+import {TOAST_TYPES} from "@constants/constants";
 
-export type ToastType = 'warning' | 'error' | 'success' | 'info';
+export type ToastTextAtomProps = {
+    message: string;
+}
 
-export type ToastMessage = { type: ToastType; message: string } | null;
+export type ToastType = typeof TOAST_TYPES[keyof typeof TOAST_TYPES];
+
+export type ToastMessage = {
+    type: typeof TOAST_TYPES[keyof typeof TOAST_TYPES];
+    message: string;
+}
 
 export type ToastContextType = {
     showToast: (type: ToastType, message: string) => void;
@@ -12,3 +20,8 @@ export type ToastContextType = {
 export type ToastProviderProps = {
     children: React.ReactNode;
 };
+
+export type ToastProps = {
+    type: ToastType;
+    message: string;
+}

@@ -1,15 +1,18 @@
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import LoginScreen from "@screens/auth/LoginScreen";
-import HomeStackNavigator from "@navigation/HomeStackNavigator";
 import {THEME} from "@theme/theme";
+import LunchScreen from "@screens/LunchScreen";
+import DinnerScreen from "@screens/DinnerScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function TabNavigator() {
+export default function MenuTabNavigator() {
     return (
         <Tab.Navigator
             screenOptions={({route}) => ({
                 tabBarStyle: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    paddingVertical: "1%",
                     backgroundColor: THEME.COLORS.primaryRed,
                 },
                 tabBarActiveTintColor: THEME.COLORS.white,
@@ -18,8 +21,24 @@ export default function TabNavigator() {
                 },
             })}
         >
-            <Tab.Screen name="Lunch" component={HomeStackNavigator}/>
-            <Tab.Screen name="Dinner" component={LoginScreen}/>
+            <Tab.Screen
+                options={{
+                    tabBarLabelStyle: {
+                        fontSize: THEME.FONTS.SIZE.sm,
+                        fontWeight: 'bold',
+                    },
+                }}
+                name="Lunch"
+                component={LunchScreen}/>
+            <Tab.Screen
+                options={{
+                    tabBarLabelStyle: {
+                        fontSize: THEME.FONTS.SIZE.sm,
+                        fontWeight: 'bold',
+                    },
+                }}
+                name="Dinner"
+                component={DinnerScreen}/>
         </Tab.Navigator>
     );
 }

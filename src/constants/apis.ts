@@ -1,0 +1,3 @@
+const APIS = {
+    LOGIN: '/userLogin',
+}

@@ -1,23 +1,21 @@
 import React from 'react';
-import {StyleSheet, Text, TextStyle} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import Constants from 'expo-constants';
+import {THEME} from "@theme/theme";
+import {ToastTextAtomProps} from "@interfaces/toastTypes";
 
-interface TextAtomProps {
-    message: string;
-}
-
-const ToastText: React.FC<TextAtomProps> = ({message}) => {
+const ToastTextAtom: React.FC<ToastTextAtomProps> = ({message}) => {
     return <Text style={styles.text}>{message}</Text>;
 };
 
 const styles = StyleSheet.create({
     text: {
-        color: '#fff',
-        fontSize: 14,
+        fontSize: THEME.FONTS.SIZE.sm,
         textAlign: 'center',
         paddingTop: Constants.statusBarHeight,
         paddingBottom: '4%',
-    } as TextStyle,
+        marginTop: 20,
+    },
 });
 
-export default ToastText;
+export default ToastTextAtom;

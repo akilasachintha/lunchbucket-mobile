@@ -1,11 +1,11 @@
 import React, {useEffect, useRef} from 'react';
 import {Animated} from 'react-native';
 import {THEME} from '@theme/theme';
-import ToastAnimatedContainer from "@components/atoms/ToastAnimatedContainer";
+import ToastAnimatedContainer from "@components/atoms/ToastAnimatedContainerAtom";
 import ToastTextAtom from "@components/atoms/ToastTextAtom";
 import {ToastProps} from "@interfaces/toastTypes";
 
-const ToastContainer: React.FC<ToastProps> = ({type, message}) => {
+const ToastMolecule: React.FC<ToastProps> = ({type, message}) => {
     const backgroundColor = type === 'warning' ? THEME.COLORS.toastWarning :
         type === 'error' ? THEME.COLORS.toastError :
             type === 'success' ? THEME.COLORS.toastSuccess :
@@ -37,4 +37,4 @@ const ToastContainer: React.FC<ToastProps> = ({type, message}) => {
     );
 };
 
-export default ToastContainer;
+export default ToastMolecule;
