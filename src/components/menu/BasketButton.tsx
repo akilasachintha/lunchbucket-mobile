@@ -4,7 +4,6 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {setMenuBasketService, updateBasketFromId} from '../../services/menuService';
 import {useToast} from '../../helpers/toast/Toast';
 import {useSelector} from "react-redux";
-import useFetchRemainingTimes from "../../services/timeService";
 import useMenuHook from "../../services/useMenuHook";
 
 interface BasketButtonProps {
@@ -38,7 +37,6 @@ const BasketButton: React.FC<BasketButtonProps> = ({
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const {getUTCDateTime} = useFetchRemainingTimes();
     const {
         packetLimit,
         checkPacketLimit,
@@ -213,7 +211,7 @@ export default BasketButton;
 
 const styles = StyleSheet.create({
     priceContainer: {
-        backgroundColor: 'rgba(255, 230, 98, 1)',
+        backgroundColor: '#FFC42D',
         paddingVertical: 20,
         flexDirection: 'row',
     },

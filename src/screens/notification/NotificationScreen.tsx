@@ -1,34 +1,50 @@
 import React, {useEffect, useState} from 'react';
-import {RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+    ActivityIndicator,
+    RefreshControl,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import TopHeader from "../../components/topHeader/TopHeader";
-import useNotificationHook from "../../services/useNotificationHook";
 import ConfirmDeleteNotificationModal from "../../components/modals/ConfirmDeleteNotificationModal";
 import {useNotificationContext} from "../../context/NotificationContext";
 
-type Notification = {
+type INotification = {
     id: number;
     notification: string;
     state: boolean;
     timestamp: string;
-}
+};
 
 export default function NotificationScreen() {
-    const {notifications, fetchNotifications} = useNotificationHook();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
-    const {fetchNotificationViewState, changeNotificationViewState, notificationViewed} = useNotificationContext();
+    const {
+        notificationViewed,
+        fetchNotificationViewState,
+        changeNotificationViewState,
+        notifications,
+        fetchNotifications,
+        isLoading,
+        setIsLoading
+    } = useNotificationContext();
 
     useEffect(() => {
-        fetchNotifications().catch((error) => console.error('Error fetching notifications:', error));
-    }, [notificationViewed]);
+        fetchNotifications();
+        setIsLoading(false);
+    }, []);
 
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
         try {
-            await fetchNotifications();
+            fetchNotifications();
         } catch (error) {
             console.error('Error refreshing notifications:', error);
         }
@@ -42,6 +58,19 @@ export default function NotificationScreen() {
     const handleNotificationPress = () => {
         changeNotificationViewState();
         fetchNotificationViewState();
+        setIsLoading(false);
+    };
+
+    if (isLoading) {
+        return (
+            <SafeAreaView style={styles.safeAreaContainer}>
+                <DynamicTopBar selectedTab={SelectedTab.NOTIFICATION}/>
+                <TopHeader headerText="Notifications" backButtonPath="Menu"/>
+                <View style={styles.bodyContainer}>
+                    <ActivityIndicator size="large" color="#630A10" style={styles.activityIndicator}/>
+                </View>
+            </SafeAreaView>
+        );
     }
 
     return (
@@ -49,41 +78,54 @@ export default function NotificationScreen() {
             <DynamicTopBar selectedTab={SelectedTab.NOTIFICATION}/>
             <TopHeader headerText="Notifications" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
-                <TouchableOpacity style={styles.deleteAllButton} onPress={handleDeleteAll}>
-                    <MaterialIcons name="delete-sweep" size={30} color="#fff"/>
-                </TouchableOpacity>
-                <ScrollView
-                    contentContainerStyle={styles.scrollViewContent}
-                    showsVerticalScrollIndicator={false}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                        />
-                    }
-                >
-                    {notifications.map((item: Notification, index: number) => (
-                        <TouchableOpacity
-                            key={index}
-                            onPress={handleNotificationPress}
-                            style={styles.notificationBox}>
-                            <View style={styles.notificationItem}>
-                                <View style={styles.iconContainer}>
-                                    <MaterialIcons
-                                        name={item.state ? 'notifications' : 'notifications-none'}
-                                        size={24}
-                                        color={item.state ? '#4CAF50' : '#757575'}
-                                    />
-                                    {item.state && <View style={styles.newNotificationDot}/>}
-                                </View>
-                                <View style={styles.textContainer}>
-                                    <Text
-                                        style={[styles.notificationText, !item.state && styles.notificationTextSeen]}>{item.notification}</Text>
-                                </View>
-                            </View>
+                {notifications.length > 0 ? (
+                    <>
+                        <TouchableOpacity style={styles.deleteAllButton} onPress={handleDeleteAll}>
+                            <MaterialIcons name="delete-sweep" size={30} color="#fff"/>
                         </TouchableOpacity>
-                    ))}
-                </ScrollView>
+                        <ScrollView
+                            contentContainerStyle={styles.scrollViewContent}
+                            showsVerticalScrollIndicator={false}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh}
+                                />
+                            }
+                        >
+                            {notifications && notifications.map((item: INotification, index: number) => {
+                                return (
+                                    <TouchableOpacity
+                                        key={index}
+                                        onPress={handleNotificationPress}
+                                        style={styles.notificationBox}>
+                                        <View style={styles.notificationItem}>
+                                            <View style={styles.iconContainer}>
+                                                <MaterialIcons
+                                                    name={notificationViewed ? 'notifications' : 'notifications-none'}
+                                                    size={24}
+                                                    color={notificationViewed ? '#4CAF50' : '#757575'}
+                                                />
+                                                {notificationViewed && <View style={styles.newNotificationDot}/>}
+                                            </View>
+                                            <View style={styles.textContainer}>
+                                                <Text
+                                                    style={[styles.notificationText, !notificationViewed && styles.notificationTextSeen]}
+                                                >
+                                                    {item.notification}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </ScrollView>
+                    </>
+                ) : (
+                    <View style={styles.noNotificationsContainer}>
+                        <Text style={styles.noNotificationsText}>No notifications</Text>
+                    </View>
+                )}
                 {isModalVisible && (
                     <ConfirmDeleteNotificationModal
                         isModalVisible={isModalVisible}
@@ -158,5 +200,19 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         zIndex: 10, // Ensure the button is above all other content
+    },
+    noNotificationsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noNotificationsText: {
+        fontSize: 18,
+        color: '#757575',
+    },
+    activityIndicator: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });

@@ -45,6 +45,7 @@ export default function Checkout() {
     const fetchCheckout = async () => {
         try {
             const result = await handleCheckoutService();
+            console.log('result', result);
 
             if (result === ERROR_STATUS.ERROR) {
                 log("error", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");

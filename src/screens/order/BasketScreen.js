@@ -25,6 +25,7 @@ export default function BasketScreen() {
     const [isButtonLoading, setIsButtonLoading] = useState(false);
     const [selectedMealId, setSelectedMealId] = useState(null);
     const [isLunch, setIsLunch] = useState(false);
+    const [isSubmit, setIsSubmit] = useState(false);
 
     const {
         disableLunchCheckbox,
@@ -32,6 +33,24 @@ export default function BasketScreen() {
         fetchDisableLunchCheckbox,
         fetchDisableDinnerCheckbox
     } = useMenuHook();
+
+    useEffect(() => {
+        fetchDisableLunchCheckbox().catch((error) =>
+            log("error", "BasketScreen", "useEffect | fetchDisableLunchCheckbox", error.message, "BasketScreen.js")
+        );
+
+        fetchDisableDinnerCheckbox().catch((error) =>
+            log("error", "BasketScreen", "useEffect | fetchDisableDinnerCheckbox", error.message, "BasketScreen.js")
+        );
+
+        if (disableLunchCheckbox) {
+            console.log("disableLunchCheckbox", disableLunchCheckbox);
+            setIsLunch(false);
+        } else if (disableDinnerCheckbox) {
+            console.log("disableDinnerCheckbox", disableDinnerCheckbox);
+            setIsLunch(true);
+        }
+    }, [disableLunchCheckbox, disableDinnerCheckbox]);
 
     const navigation = useNavigation();
     const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
@@ -79,22 +98,27 @@ export default function BasketScreen() {
         fetchDisableLunchCheckbox().catch((error) =>
             log("error", "BasketScreen", "useEffect | fetchDisableLunchCheckbox", error.message, "BasketScreen.js")
         );
-
         fetchDisableDinnerCheckbox().catch((error) =>
             log("error", "BasketScreen", "useEffect | fetchDisableDinnerCheckbox", error.message, "BasketScreen.js")
         );
+    }, [isLunch]);
 
-        if (disableLunchCheckbox) {
-            console.log("disableLunchCheckbox", disableLunchCheckbox);
-            setIsLunch(false);
-        } else if (disableDinnerCheckbox) {
-            console.log("disableDinnerCheckbox", disableDinnerCheckbox);
-            setIsLunch(true);
-        }
+    const checkLunchAvailability = async () => {
+        await fetchDisableLunchCheckbox(); // Assuming this updates the disableLunchCheckbox state
+        return !disableLunchCheckbox; // Returns true if lunch is available
+    };
 
-    }, [disableLunchCheckbox, disableDinnerCheckbox]);
+    const checkDinnerAvailability = async () => {
+        await fetchDisableDinnerCheckbox(); // Assuming this updates the disableDinnerCheckbox state
+        return !disableDinnerCheckbox; // Returns true if dinner is available
+    };
+
 
     const handleProceedToOrder = async () => {
+        setIsSubmit(true);
+
+        if (isSubmit) return;
+
         setIsButtonLoading(true);
 
         await fetchDisableDinnerCheckbox();
@@ -107,6 +131,33 @@ export default function BasketScreen() {
             console.log("disableDinnerCheckbox", disableDinnerCheckbox);
             setIsLunch(true);
         }
+
+        const lunchAvailable = await checkLunchAvailability();
+        const dinnerAvailable = await checkDinnerAvailability();
+
+        if (lunchAvailable) {
+            setIsLunch(true);
+        } else if (dinnerAvailable) {
+            setIsLunch(false);
+        }
+
+        setTimeout(async () => {
+
+            await fetchDisableDinnerCheckbox();
+            await fetchDisableLunchCheckbox();
+
+            if (disableLunchCheckbox) {
+                console.log("disableLunchCheckbox", disableLunchCheckbox);
+                setIsLunch(prevState => true);
+            } else if (disableDinnerCheckbox) {
+                console.log("disableDinnerCheckbox", disableDinnerCheckbox);
+                setIsLunch(prevState => false);
+            }
+
+            console.log("Lunch availability: ", lunchAvailable, " | Dinner availability: ", dinnerAvailable);
+            console.log("isLunch state updated to: ", isLunch);
+
+        }, 5);
 
         console.log("disableLunchCheckbox", disableLunchCheckbox);
         console.log("disableDinnerCheckbox", disableDinnerCheckbox);
@@ -134,6 +185,10 @@ export default function BasketScreen() {
             return;
         }
 
+        console.log("isLunchItems", isLunchItems);
+        console.log("isDinnerItems", isDinnerItems);
+
+
         if (isLunch && isDinnerItems.length !== 0) {
             basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Dinner");
             await addDataToLocalStorage("basket", JSON.stringify(basket));
@@ -142,6 +197,8 @@ export default function BasketScreen() {
             setIsButtonLoading(false);
             return;
         }
+
+        console.log("isLunch", isLunch);
 
         if (!isLunch && isLunchItems.length !== 0) {
             basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Lunch");
@@ -176,7 +233,7 @@ export default function BasketScreen() {
                 <View style={styles.bodyContainer}>
                     <ActivityIndicator size="large" color="#7E1F24" style={styles.loadingIndicator}/>
                     <BorderButton text="Add Meal" onPress={() => navigation.navigate('Menu')} icon={plusIcon}/>
-                    <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder}/>
+                    <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={true}/>
                 </View>
             </SafeAreaView>
         )

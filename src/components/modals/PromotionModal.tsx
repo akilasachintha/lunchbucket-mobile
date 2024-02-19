@@ -49,6 +49,7 @@ const PromotionModal: React.FC<PromotionProps> = ({isModalVisible, setIsModalVis
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',

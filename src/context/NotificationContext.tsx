@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useContext} from 'react';
+import React, {createContext, ReactNode, useContext, useEffect} from 'react';
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {auth2API, projectCode} from "../apis/lunchBucketAPI";
 
@@ -7,6 +7,11 @@ export interface NotificationContextType {
     fetchNotificationViewState: () => void;
     notificationViewed: boolean;
     deleteNotifications: () => void;
+    notifications: INotification[];
+    fetchNotifications: () => void;
+    setNotifications: React.Dispatch<React.SetStateAction<INotification[]>>;
+    isLoading: boolean;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -15,11 +20,55 @@ interface NotificationProviderProps {
     children: ReactNode;
 }
 
+type INotification = {
+    id: number;
+    notification: string;
+    state: boolean;
+    timestamp: string;
+};
+
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({children}) => {
     const [notificationViewed, setNotificationViewed] = React.useState(false);
+    const [notifications, setNotifications] = React.useState<INotification[]>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchNotifications().catch((error) => console.error('Error fetching notifications:', error));
+        setIsLoading(false);
+    }, []);
+
+    const fetchNotifications = async () => {
+        try {
+            setIsLoading(true);
+            const token = await getDataFromLocalStorage('token');
+
+            const response = await auth2API.get('notifications', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token': token,
+                    'project_code': projectCode,
+                },
+            });
+
+            if (response.status === 200) {
+                const data = response && response.data && response.data.data && response.data.data.notification && response.data.data.notification.notifications;
+                console.log(data);
+                if (data) {
+                    setNotifications(data);
+                    console.log(data);
+                }
+            }
+
+        } catch (error: any) {
+            console.log(error);
+            setIsLoading(false);
+        }
+    }
 
     const changeNotificationViewState = async () => {
         try {
+            setIsLoading(true);
             const token = await getDataFromLocalStorage('token');
 
             const response = await auth2API.put('view_notifications', {}, {
@@ -36,11 +85,14 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
 
         } catch (error: any) {
             console.log(error);
+            setIsLoading(false);
         }
     }
 
     const deleteNotifications = async () => {
         try {
+
+            setIsLoading(true);
             const token = await getDataFromLocalStorage('token');
 
             const response = await auth2API.delete('notifications', {
@@ -51,16 +103,22 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
             });
 
             if (response.status === 200) {
-                setNotificationViewed(false);
+                setNotifications([]);
             }
+
+            setNotifications([]);
 
         } catch (error: any) {
             console.log(error);
+            setNotifications([]);
+            setIsLoading(false);
         }
     }
 
     const fetchNotificationViewState = async () => {
         try {
+
+            setIsLoading(true);
             const token = await getDataFromLocalStorage('token');
 
             const response = await auth2API.get('notifications', {
@@ -76,20 +134,29 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
                 console.log(data);
                 if (data) {
                     setNotificationViewed(data);
-
                     console.log(data);
                 }
             }
 
-
         } catch (error: any) {
             console.log(error);
+            setIsLoading(false);
         }
     }
 
     return (
         <NotificationContext.Provider
-            value={{changeNotificationViewState, fetchNotificationViewState, notificationViewed, deleteNotifications}}>
+            value={{
+                changeNotificationViewState,
+                fetchNotificationViewState,
+                notificationViewed,
+                deleteNotifications,
+                notifications,
+                fetchNotifications,
+                setNotifications,
+                isLoading,
+                setIsLoading,
+            }}>
             {children}
         </NotificationContext.Provider>
     );

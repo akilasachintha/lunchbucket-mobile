@@ -81,8 +81,8 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
 
     const filteredMenuData = specialMenu.map(category => ({
         ...category,
-        category: category.category.filter(item => item.vegetarian === isVeg)
-    }));
+        items: category.category.filter((item: any) => item.vegetarian === isVeg)
+    })).filter(category => category.items.length > 0);
 
     return (
         <View>

@@ -1,7 +1,6 @@
 import React from 'react';
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNotificationContext} from "../../context/NotificationContext";
-import useNotificationHook from "../../services/useNotificationHook";
 
 interface ConfirmDeleteModalProps {
     isModalVisible: boolean;
@@ -11,15 +10,22 @@ interface ConfirmDeleteModalProps {
 const ConfirmDeleteNotificationModal: React.FC<ConfirmDeleteModalProps> = ({
                                                                                setIsModalVisible,
                                                                            }) => {
+    const {
+        deleteNotifications,
+        fetchNotifications,
+        notifications,
+        setNotifications,
+        isLoading,
+        setIsLoading,
+    } = useNotificationContext();
 
-    const {deleteNotifications} = useNotificationContext();
-    const {fetchNotifications} = useNotificationHook();
-
-    const handleDelete = () => {
+    const handleDelete = async () => {
         deleteNotifications();
         setIsModalVisible(false);
-        fetchNotifications().catch((error) => console.error('Error fetching notifications:', error));
-    }
+        setNotifications([]);
+        fetchNotifications();
+        setIsLoading(false);
+    };
 
     return (
         <View style={styles.container}>
@@ -30,7 +36,7 @@ const ConfirmDeleteNotificationModal: React.FC<ConfirmDeleteModalProps> = ({
                     <View style={styles.modal}>
                         <View style={styles.deleteModalTopContainer}>
                             <Text style={styles.deleteModalTopContainerText}>Are you sure you want to delete this
-                                Meal?</Text>
+                                Notifications?</Text>
                         </View>
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity
@@ -46,7 +52,10 @@ const ConfirmDeleteNotificationModal: React.FC<ConfirmDeleteModalProps> = ({
                                 onPress={handleDelete}
                             >
                                 <View style={styles.getStartedButtonConfirmTextContainer}>
-                                    <Text style={styles.buttonConfirmText}>Delete</Text>
+                                    {
+                                        isLoading ? <Text style={styles.buttonConfirmText}>Loading...</Text> :
+                                            <Text style={styles.buttonConfirmText}>Delete</Text>
+                                    }
                                 </View>
                             </TouchableOpacity>
                         </View>

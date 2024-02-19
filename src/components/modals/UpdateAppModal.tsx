@@ -46,6 +46,7 @@ const UpdateAppModal: React.FC<UpdateAppModalProps> = ({isModalVisible, setIsMod
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',

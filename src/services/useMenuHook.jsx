@@ -16,6 +16,15 @@ export default function useMenuHook() {
 
     }, [isLunchHook, setIsLunchHook, orderTypeHook, setOrderTypeHook]);
 
+
+    useEffect(() => {
+        fetchDisableLunchCheckbox().catch((error) => console.log(error.message));
+        fetchDisableDinnerCheckbox().catch((error) => console.log(error.message));
+
+
+    }, [disableLunchCheckbox, disableDinnerCheckbox]);
+
+
     const fetchDisableLunchCheckbox = async () => {
         try {
             const token = await getDataFromLocalStorage('token');

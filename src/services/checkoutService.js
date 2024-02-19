@@ -36,7 +36,10 @@ export async function handleCheckoutService() {
         }
 
         if (basketItems && basketItems.meal && basketItems.meal.length > 0) {
+            console.log(JSON.stringify(basketItems.meal, null, 2));
+
             basketItems.meal.forEach((meal) => {
+                console.log(meal);
                 if (meal.isSpecial) {
                     checkoutMenu.orders.push({
                         order_type: "special",
@@ -44,11 +47,15 @@ export async function handleCheckoutService() {
                         order_status: 'pending',
                         meal: meal.venue,
                         customer_id: customerId,
+                        category: meal.items[0]?.category || "",
+                        type: meal.items[0]?.type || "",
                         comment: "",
                         price: meal.totalPrice,
                         potion: false,
                         special_meal: meal.items[0]?.id || "",
                     });
+
+                    console.log(JSON.stringify(checkoutMenu, null, 2));
                 } else if (meal.isVeg) {
                     checkoutMenu.orders.push({
                         order_type: "vegi",
@@ -74,6 +81,8 @@ export async function handleCheckoutService() {
                         potion: false,
                     });
                 }
+
+                console.log(JSON.stringify(checkoutMenu, null, 2));
             });
         } else {
             log("error", "checkoutService", "handleCheckoutService | basketItems.meal", basketItems.meal, "checkoutService.js");
