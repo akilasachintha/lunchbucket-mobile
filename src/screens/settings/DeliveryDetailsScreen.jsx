@@ -40,24 +40,33 @@ export default function DeliveryDetailsScreen() {
                         {/* Lunch Delivery Schedule Section */}
                         <Text style={styles.header}>☀️ Lunch Delivery Schedule</Text>
                         <Text style={styles.info}>
-                            <Text style={{fontWeight: 'bold'}}>5pm - 7am:</Text> Place your order, Receive at 11am or
-                            12:30pm.{'\n'}
-                            <Text style={{fontWeight: 'bold'}}>7am - 9am:</Text> Place your order, Receive at
-                            12:30pm.{'\n'}
-                            <Text style={{fontWeight: 'bold'}}>9am - 11am:</Text> Place your order, Receive at 2pm{' '}
-                            <Text style={{fontStyle: 'italic'}}>(Extra 10% will be charged).</Text>
+                            <Text style={{fontWeight: 'bold'}}>7.30 PM - 7 AM:</Text> Place your order, Receive at 11 PM
+                            or
+                            12:30 PM.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>7 AM - 11 AM:</Text> Place your order, Receive at
+                            12:30 PM.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>11 AM - 12.30 PM:</Text> Place your order, Receive at
+                            2 PM{' '}
+                        </Text>
+
+                        {/* Authentic Delivery Schedule Section */}
+                        <Text style={styles.header}>🌥️ Authentic Delivery Schedule</Text>
+                        <Text style={styles.info}>
+                            <Text style={{fontWeight: 'bold'}}>12.30 PM - 2.30 PM:</Text> Place your order, Receive at
+                            3.30 PM.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>2.30 PM - 3.30pm:</Text> Place your order, Receive at
+                            4:30 PM{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>3.30 PM - 4.30 PM:</Text> Place your order, Receive at
+                            5:30 PM{' '}
                         </Text>
 
                         {/* Dinner Delivery Schedule Section */}
                         <Text style={styles.header}>🌙 Dinner Delivery Schedule</Text>
                         <Text style={styles.info}>
-                            <Text style={{fontWeight: 'bold'}}>11am - 3pm:</Text> Place your order, Receive at 7:30pm or
-                            8:30pm.{'\n'}
-                            <Text style={{fontWeight: 'bold'}}>3pm - 4pm:</Text> Place your order, Receive at
-                            7:30pm.{'\n'}
-                            <Text style={{fontWeight: 'bold'}}>4pm - 5pm:</Text> Place your order, Receive at
-                            8:30pm{' '}
-                            <Text style={{fontStyle: 'italic'}}>(Extra 10% will be charged).</Text>
+                            <Text style={{fontWeight: 'bold'}}>12.30 PM - 6 PM:</Text> Place your order, Receive at
+                            7:30 PM. or 8.30 PM.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>6 PM - 7 PM:</Text> Place your order, Receive at
+                            8:30 PM{' '}
                         </Text>
 
                     </View>

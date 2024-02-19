@@ -24,7 +24,10 @@ type INotification = {
     id: number;
     notification: string;
     state: boolean;
-    timestamp: string;
+    timestamp: {
+        date: string;
+        time: string;
+    };
 };
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({children}) => {
@@ -56,9 +59,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
                 console.log(data);
                 if (data) {
                     setNotifications(data);
+                    setIsLoading(false);
                     console.log(data);
                 }
             }
+
+            setIsLoading(false);
 
         } catch (error: any) {
             console.log(error);
@@ -82,6 +88,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
             if (response.status === 200) {
                 setNotificationViewed(false);
             }
+
+            setIsLoading(false);
 
         } catch (error: any) {
             console.log(error);

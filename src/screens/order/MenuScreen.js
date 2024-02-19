@@ -51,6 +51,10 @@ export default function MenuScreen({route}) {
     const [loading, setLoading] = useState(true);
     const [isVegLunch, setIsVegLunch] = useState(false);
     const [isVegDinner, setIsVegDinner] = useState(false);
+
+    const [isVegLunchSpecial, setIsVegLunchSpecial] = useState(false);
+    const [isVegDinnerSpecial, setIsVegDinnerSpecial] = useState(false);
+
     const [mealId, setMealId] = useState(0);
     const [, setMeal] = useState({});
 
@@ -547,7 +551,9 @@ export default function MenuScreen({route}) {
                         totalCheckedSpecialItemsCount={isLunch ? totalCheckedSpecialLunchItemsCount : totalCheckedSpecialDinnerItemsCount}
                         setSpecialMenu={isLunch ? setLunchSpecialItems : setDinnerSpecialItems}
                         isVeg={isLunch ? isVegLunch : isVegDinner}
+                        isVegSpecial={isLunch ? isVegLunchSpecial : isVegDinnerSpecial}
                         setIsVeg={isLunch ? setIsVegLunch : setIsVegDinner}
+                        setIsVegSpecial={isLunch ? setIsVegLunchSpecial : setIsVegDinnerSpecial}
                         itemList={isLunch ? lunchItemList : dinnerItemList}
                         totalCheckedItemsCount={isLunch ? totalCheckedLunchItemsCount : totalCheckedDinnerItemsCount}
                         totalCheckedItems={isLunch ? getTotalCheckedItems(lunchItemList) : getTotalCheckedItems(dinnerItemList)}

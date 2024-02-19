@@ -191,7 +191,7 @@ export default function SignUp({navigation}) {
                 <View style={styles.bottomContainer}>
                     <View>
                         <Text
-                            style={[styles.welcomeBackText, isKeyboardVisible && {marginTop: "30%"}]}>{STRINGS.welcomeBack}</Text>
+                            style={[styles.welcomeBackText, isKeyboardVisible && {marginTop: "30%"}]}>Let's Begin</Text>
                     </View>
                     <View>
                         <Formik initialValues={initialValues} validationSchema={validationSchema}

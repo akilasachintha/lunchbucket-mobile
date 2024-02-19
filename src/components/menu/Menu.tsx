@@ -42,6 +42,8 @@ interface MenuProps {
     loading: boolean;
     clearAndFetchData: () => Promise<void>;
     isLunch: boolean;
+    isVegSpecial: boolean;
+    setIsVegSpecial: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Menu: React.FC<MenuProps> = ({
@@ -54,7 +56,9 @@ const Menu: React.FC<MenuProps> = ({
                                        totalCheckedItems,
                                        disableTime,
                                        mealId = 0,
+                                       isVegSpecial,
                                        isVeg,
+                                       setIsVegSpecial,
                                        setIsVeg,
                                        totalCheckedSpecialItemsCount = 0,
                                        totalCheckedSpecialItems,
@@ -173,8 +177,8 @@ const Menu: React.FC<MenuProps> = ({
                                      setSpecialMenu={setSpecialMenu}
                                      totalCheckedItemsCount={totalCheckedItemsCount}
                                      disableTime={disableTime}
-                                     setIsVeg={setIsVeg}
-                                     isVeg={isVeg}
+                                     setIsVeg={setIsVegSpecial}
+                                     isVeg={isVegSpecial}
                                      clearAndFetchData={clearAndFetchData}
                                      setTotalSpecialPrice={setTotalSpecialPrice}/>
                     )}

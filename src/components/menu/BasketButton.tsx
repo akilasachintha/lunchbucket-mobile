@@ -181,8 +181,10 @@ const BasketButton: React.FC<BasketButtonProps> = ({
     );
 
     return (
-        <View style={styles.priceContainer}>
-            <TouchableOpacity style={styles.priceContainerLeft} onPress={() => handleBasketPress()}
+        <TouchableOpacity
+            onPress={() => handleBasketPress()}
+            style={styles.priceContainer}>
+            <TouchableOpacity style={styles.priceContainerLeft}
                               disabled={isLoading}>
                 {isLoading ? (
                     <ActivityIndicator size={26} color="#630A10"/>
@@ -203,7 +205,7 @@ const BasketButton: React.FC<BasketButtonProps> = ({
                         (totalCheckedSpecialItemsCount > 0 ? (isEditMenu ? 0 : totalSpecialPrice) : 0)}</Text>
                 </View>
             )}
-        </View>
+        </TouchableOpacity>
     );
 };
 

@@ -20,7 +20,10 @@ type INotification = {
     id: number;
     notification: string;
     state: boolean;
-    timestamp: string;
+    timestamp: {
+        date: string;
+        time: string;
+    };
 };
 
 export default function NotificationScreen() {
@@ -39,7 +42,8 @@ export default function NotificationScreen() {
     useEffect(() => {
         fetchNotifications();
         setIsLoading(false);
-    }, []);
+
+    }, [isLoading]);
 
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
@@ -114,6 +118,20 @@ export default function NotificationScreen() {
                                                 >
                                                     {item.notification}
                                                 </Text>
+                                                <View style={{
+                                                    alignItems: "flex-start",
+                                                    paddingTop: "4%"
+                                                }}>
+                                                    <Text
+                                                        style={{
+                                                            fontStyle: "italic",
+                                                            fontSize: 10
+                                                        }}>{item.timestamp && item.timestamp.date}</Text>
+                                                </View>
+                                            </View>
+                                            <View>
+                                                <Text
+                                                    style={{paddingHorizontal: 10}}>{item.timestamp && item.timestamp.time}</Text>
                                             </View>
                                         </View>
                                     </TouchableOpacity>

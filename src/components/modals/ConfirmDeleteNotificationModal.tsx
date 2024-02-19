@@ -23,7 +23,6 @@ const ConfirmDeleteNotificationModal: React.FC<ConfirmDeleteModalProps> = ({
         deleteNotifications();
         setIsModalVisible(false);
         setNotifications([]);
-        fetchNotifications();
         setIsLoading(false);
     };
 

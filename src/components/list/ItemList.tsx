@@ -76,10 +76,13 @@ interface ItemListProps {
 const ItemList: React.FC<ItemListProps> = ({title, items, handleItemPress, disableCheckbox, isVeg}) => {
     const filteredItemObjects: { index: number; item: ItemListProps["items"][0] }[] = [];
 
+    console.log(items);
+
     items.forEach((item, index) => {
         if (isVeg && !(item.vegetarian || item.foodType === "Rice")) {
             return;
         }
+
         filteredItemObjects.push({index, item});
     });
 

@@ -17,21 +17,26 @@ export default function OrderingDetailsScreen() {
 
                         {/* Ordering Timing Section */}
                         <Text style={styles.header}>⏳ Ordering Timing</Text>
-                        <Text style={styles.info}>
-                            Place lunch orders between{' '}
-                            <Text style={{fontWeight: 'bold'}}>5 pm</Text> and{' '}
-                            <Text style={{fontWeight: 'bold'}}>11 am</Text>, subject to availability.
-                            Dinner orders are accepted from{' '}
-                            <Text style={{fontWeight: 'bold'}}>11 am</Text> to{' '}
-                            <Text style={{fontWeight: 'bold'}}>5 pm</Text>, based on availability.
-                        </Text>
+
+                        <Text style={styles.info}>Place Lunch Orders between <Text
+                            style={{fontWeight: 'bold'}}>7:30 PM (Previous
+                            day)</Text> - <Text style={{fontWeight: 'bold'}}>12:30 PM</Text>, subject to
+                            availability.</Text>
+                        <Text style={styles.info}>Lunch Bucket Authentic foods can
+                            be ordered between <Text
+                                style={{fontWeight: 'bold'}}>12:30 PM</Text> - <Text style={{fontWeight: 'bold'}}>4:30
+                                PM</Text>.</Text>
+                        <Text style={styles.info}>Dinner Orders are accepted
+                            from <Text style={{fontWeight: 'bold'}}>12:30
+                                PM</Text> - <Text style={{fontWeight: 'bold'}}>7:30 PM</Text>, based on
+                            availability.</Text>
+
 
                         {/* Meal Selection Section */}
                         <Text style={styles.header}>📝 Meal Selection</Text>
                         <Text style={styles.info}>
-                            Explore our daily menu.
-                            Choose either a regular meal or opt for a special.
-                            For a main meal, select four food items and include one rice dish.
+                            Explore our daily menu. Choose either a Choice meal or opt for a Special Meal. Our evening meal, Lunch Bucket Authentic is available in the Special Category.
+                            For the Choice Meal, select four dishes and include one rice portion.
                         </Text>
 
                         {/* Adding to Basket Section */}
@@ -115,7 +120,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color: '#4A5568',
         lineHeight: 24,
-        marginBottom: 20,
+        marginBottom: 10,
     },
     infoSub: {
         fontSize: 16,

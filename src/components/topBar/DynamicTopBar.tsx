@@ -60,7 +60,6 @@ function TabIcon({name, tabName, screenName, selectedTab, onPress}: TabIconProps
             dispatch({type: 'menu/setIsEditMenuFalseReducer'});
         }
         if (screenName) {
-
             // @ts-ignore
             navigation.navigate(screenName);
         }

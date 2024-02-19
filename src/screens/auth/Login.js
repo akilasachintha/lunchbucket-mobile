@@ -220,7 +220,7 @@ export default function Login({navigation}) {
                 }
                 <View style={styles.bottomContainer}>
                     <View>
-                        <Text style={styles.welcomeBackText}>Welcome</Text>
+                        <Text style={styles.welcomeBackText}>Welcome Back</Text>
                     </View>
                     <View>
                         <Formik
