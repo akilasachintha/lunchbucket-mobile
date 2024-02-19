@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Image, StyleSheet, Switch, Text, View} from 'react-native';
 import {AntDesign, MaterialIcons} from "@expo/vector-icons";
 import toTitleCase from "../../helpers/strings/stringFormatter";
@@ -43,13 +43,15 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
     const handleItemPress = (mainIndex: number, subIndex: number) => {
         setSpecialMenu((prevMenuItems) => {
             const updatedMenuItems = [...prevMenuItems];
-            updatedMenuItems[mainIndex].category[subIndex].checked = !updatedMenuItems[mainIndex].category[subIndex].checked;
+            console.log(mainIndex, subIndex);
 
-            console.log("updatedMenuItems 2", JSON.stringify(updatedMenuItems, null, 2));
+            console.log("updatedMenuItems 1", JSON.stringify(updatedMenuItems[mainIndex].category[subIndex].checked ,null, 2));
+
+            updatedMenuItems[mainIndex].category[subIndex].checked = !(updatedMenuItems[mainIndex].category[subIndex].checked);
+
             return updatedMenuItems;
         });
 
-        console.log("totalCheckedItemsCount", totalCheckedItemsCount);
 
         const totalSpecialItems = calculateSpecialMenuPrice();
         setTotalSpecialPrice(totalSpecialItems);

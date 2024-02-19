@@ -184,7 +184,9 @@ const BasketButton: React.FC<BasketButtonProps> = ({
         <TouchableOpacity
             onPress={() => handleBasketPress()}
             style={styles.priceContainer}>
-            <TouchableOpacity style={styles.priceContainerLeft}
+            <TouchableOpacity
+                onPress={() => handleBasketPress()}
+                style={styles.priceContainerLeft}
                               disabled={isLoading}>
                 {isLoading ? (
                     <ActivityIndicator size={26} color="#630A10"/>
