@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "983343413507",
+    "project_id": "lunchbucket-mobile",
+    "storage_bucket": "lunchbucket-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983343413507:android:1681cbb4197e50d272d136",
+        "android_client_info": {
+          "package_name": "com.lunchbucket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6wZP_vTCcdP7VNe2JOu2QrKM7ZXE1VFQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Lunch Bucket",
+    "description": "Online food delivery Application.",
+    "slug": "lunchbucket",
+    "scheme": "com.lunchbucket",
+    "version": "1.0.0",
+    "owner": "lunchbucket",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "jsEngine": "hermes",
+    "splash": {
+      "image": "./src/assets/splash1.png",
+      "waitForLoadingScreen": true,
+      "loadingScreenImage": "./src/assets/splash1.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#FCF0C8",
+      "loadingScreenBackgroundColor": "#FCF0C8"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/28d5e5c1-53f3-4c9c-abcb-2bdbc0639464"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lunchbucket",
+      "buildNumber": "11"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#9E0808"
+      },
+      "googleServicesFile": "./google-services.json",
+      "package": "com.lunchbucket",
+      "versionCode": 27
+    },
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "28d5e5c1-53f3-4c9c-abcb-2bdbc0639464"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}
