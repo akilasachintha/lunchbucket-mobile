@@ -71,6 +71,7 @@ export default function ListOrdersScreen() {
             <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView
+                    showsVerticalScrollIndicator={false}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
@@ -109,7 +110,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     bodyContainer: {
-        paddingTop: 20,
         flex: 10,
     },
     bodyContainerLoading: {

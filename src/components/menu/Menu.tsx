@@ -16,6 +16,7 @@ import SpecialMenu from "./SpecialMenu";
 import {useSelector} from "react-redux";
 import {FontAwesome5} from '@expo/vector-icons';
 import {useNavigation} from "@react-navigation/native";
+import {useMenuContext} from "../../context/MenuContext";
 
 interface MenuItem {
     type: string;
@@ -44,6 +45,8 @@ interface MenuProps {
     isLunch: boolean;
     isVegSpecial: boolean;
     setIsVegSpecial: React.Dispatch<React.SetStateAction<boolean>>;
+    lunchRiceItems: any[];
+    dinnerRiceItems: any[];
 }
 
 const Menu: React.FC<MenuProps> = ({
@@ -66,11 +69,14 @@ const Menu: React.FC<MenuProps> = ({
                                        onRefresh,
                                        loading,
                                        clearAndFetchData,
-                                       isLunch
+                                       isLunch,
+                                       lunchRiceItems,
+                                       dinnerRiceItems
                                    }) => {
 
     const isEditMenu = useSelector((state: any) => state.menu.isEditMenu);
     const navigation = useNavigation();
+    const {menuLimits} = useMenuContext();
 
     const [showSpecialMenu, setShowSpecialMenu] = useState(false);
     const [totalSpecialPrice, setTotalSpecialPrice] = useState(0);
@@ -128,6 +134,8 @@ const Menu: React.FC<MenuProps> = ({
                 mealId={mealId}
                 isVeg={isVeg}
                 isLunch={isLunch}
+                lunchRiceItems={lunchRiceItems}
+                dinnerRiceItems={dinnerRiceItems}
             />
         </View>
     );
@@ -141,7 +149,7 @@ const Menu: React.FC<MenuProps> = ({
             >
                 {
                     !isEditMenu && (
-                        <View style={styles.chooseTypeContainer}>
+                        <View style={[styles.chooseTypeContainer]}>
                             {
                                 totalCheckedSpecialItemsCount <= 0 && (
                                     <TouchableOpacity
@@ -221,8 +229,24 @@ const Menu: React.FC<MenuProps> = ({
                     navigation.navigate('Settings');
                 }}
             >
-                <FontAwesome5 name="question" size={24} color="white"/>
+                <FontAwesome5 name="question" size={20} color="white"/>
             </TouchableOpacity>
+
+            <View>
+                {Object.entries(menuLimits != null && menuLimits.extra_payments).map(([count, detail]) => {
+                    if (detail.payment > 0 && totalCheckedItemsCount === parseInt(count)) {
+                        return (
+                            <TouchableOpacity key={count} style={styles.extraPayment}>
+                                <Text style={styles.extraPaymentText}>
+                                    If you select {count} meals, {detail.description} is Rs {detail.payment}.
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    }
+                    return null;
+                })}
+            </View>
+
             <BasketButton
                 totalCheckedSpecialItems={totalCheckedSpecialItems}
                 totalCheckedSpecialItemsCount={totalCheckedSpecialItemsCount}
@@ -234,14 +258,27 @@ const Menu: React.FC<MenuProps> = ({
                 isLunch={isLunch}
                 mealId={mealId}
                 isVeg={isVeg}
+                lunchRiceItems={lunchRiceItems}
+                dinnerRiceItems={dinnerRiceItems}
             />
         </View>
     );
 };
 
+
 export default Menu;
 
 const styles = StyleSheet.create({
+    shadowProp: {
+        shadowColor: '#171717',
+        shadowOffset: {width: -2, height: 4},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+    },
+    elevation: {
+        elevation: 10,
+        shadowColor: '#5b595b',
+    },
     bodyContentContainer: {
         flex: 6,
     },
@@ -318,14 +355,23 @@ const styles = StyleSheet.create({
     fab: {
         position: 'absolute',
         zIndex: 10,
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         alignItems: 'center',
         justifyContent: 'center',
-        right: 30,
-        bottom: 35,
+        right: 10,
+        bottom: 10,
+        borderRadius: 25,
         backgroundColor: '#630A10',
-        borderRadius: 60,
-        elevation: 8,
+        elevation: 4,
+    },
+    extraPayment: {
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        padding: 10,
+        alignItems: 'center',
+    },
+    extraPaymentText: {
+        color: '#FFF',
+        fontSize: 14,
     },
 });

@@ -304,7 +304,7 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
         return SUCCESS_STATUS.SUCCESS;
 
     } catch (error) {
-        log('error', 'service', 'setMenuBasketService' + error.message, 'menuService.js');
+        log('error', 'service', 'setMenuBasketService', error.message, 'menuService.js');
         return ERROR_STATUS.ERROR;
     }
 }

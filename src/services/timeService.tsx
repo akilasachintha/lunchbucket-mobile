@@ -24,7 +24,7 @@ const useFetchRemainingTimes = (): FetchRemainingTimesResult => {
                 return response.data;
             }
         } catch (error) {
-            console.error('Error fetching UTC time:', error);
+            console.log('Error fetching UTC time:', error);
             return null;
         }
     };

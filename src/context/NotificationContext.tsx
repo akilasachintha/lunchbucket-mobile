@@ -86,6 +86,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
             });
 
             if (response.status === 200) {
+                await fetchNotifications();
                 setNotificationViewed(false);
             }
 

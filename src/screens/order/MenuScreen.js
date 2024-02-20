@@ -35,6 +35,7 @@ import UpdateAppModal from "../../components/modals/UpdateAppModal";
 import useAppUpdateHook from "../../services/useAppUpdateHook";
 import PromotionModal from "../../components/modals/PromotionModal";
 import usePromotionHook from "../../services/usePromotionHook";
+import {useMenuContext} from "../../context/MenuContext";
 
 export default function MenuScreen({route}) {
     const {showToast} = useToast();
@@ -43,6 +44,7 @@ export default function MenuScreen({route}) {
     const menuPercentageLunchForTwoIDs = useSelector(state => state.menuPercentage.menuPercentageLunchForTwoIDs);
     const menuPercentageDinnerForThreeIDs = useSelector(state => state.menuPercentage.menuPercentageDinnerForThreeIDs);
     const menuPercentageLunchForThreeIDs = useSelector(state => state.menuPercentage.menuPercentageLunchForThreeIDs);
+    const {menuLimits} = useMenuContext();
 
     const dispatch = useDispatch();
     const [selectedItems, setSelectedItems] = useState([]);
@@ -98,7 +100,7 @@ export default function MenuScreen({route}) {
                 setIsVegDinner(result.isVeg);
                 const dinnerMenu = await getDinnerMenuService();
                 const totalDinnerVegetableItems = await getDinnerVegetableMenuService(dinnerMenu);
-                const dinnerVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
+                const dinnerVegetableItems = result.items.filter((item) => item.foodType === "Vegetables");
                 const updatedDinnerVegetableItems = totalDinnerVegetableItems.map((item) => {
                     const foundItem = dinnerVegetableItems.find((dinnerItem) => dinnerItem.id === item.id);
                     return {
@@ -148,7 +150,7 @@ export default function MenuScreen({route}) {
                 const lunchMenu = await getLunchMenuService();
 
                 const totalLunchVegetableItems = await getLunchVegetableMenuService(lunchMenu);
-                const lunchVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
+                const lunchVegetableItems = result.items.filter((item) => item.foodType === "Vegetables");
                 const updatedLunchVegetableItems = totalLunchVegetableItems.map((item) => {
                     const foundItem = lunchVegetableItems.find((lunchItem) => lunchItem.id === item.id);
                     return {
@@ -264,14 +266,15 @@ export default function MenuScreen({route}) {
                         showToast('error', `You can select one rice item only.`);
                         return;
                     }
+
                     const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
                     const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
-                    if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= 4 || totalCheckedDinnerItemsCount >= 4)) {
-                        showToast('error', `Need to select one rice item.`);
+                    if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= menuLimits.limits.min - 1 || totalCheckedDinnerItemsCount >= menuLimits.limits.min - 1)) {
+                        showToast('error', `Need to select one rice item for proceeding.`);
                         return;
-                    } else if (totalCheckedLunchItemsCount >= 5 || totalCheckedDinnerItemsCount >= 5) {
-                        showToast('error', `You can select up to 5 dishes only.`);
+                    } else if (totalCheckedLunchItemsCount >= 6 || totalCheckedDinnerItemsCount >= menuLimits.limits.max) {
+                        showToast('error', `You can select up to ${menuLimits.limits.max} dishes only.`);
                         return;
                     } else {
                         newItems[index].checked = true;
@@ -286,14 +289,14 @@ export default function MenuScreen({route}) {
 
     const lunchItemList = [
         createItemListWithType("Rice", lunchRiceItems, setLunchRiceItems, 1, disableLunchCheckbox),
-        createItemListWithType("Vegetable", lunchVegetableItems, setLunchVegetableItems, 2, disableLunchCheckbox),
+        createItemListWithType("Vegetables", lunchVegetableItems, setLunchVegetableItems, 2, disableLunchCheckbox),
         createItemListWithType("Condiments", lunchStewItems, setLunchStewItems, 1, disableLunchCheckbox),
         createItemListWithType("Meat", lunchMeatItems, setLunchMeatItems, 1, disableLunchCheckbox),
     ];
 
     const dinnerItemList = [
         createItemListWithType("Rice", dinnerRiceItems, setDinnerRiceItems, 1, disableDinnerCheckbox),
-        createItemListWithType("Vegetable", dinnerVegetableItems, setDinnerVegetableItems, 2, disableDinnerCheckbox),
+        createItemListWithType("Vegetables", dinnerVegetableItems, setDinnerVegetableItems, 2, disableDinnerCheckbox),
         createItemListWithType("Condiments", dinnerStewItems, setDinnerStewItems, 1, disableDinnerCheckbox),
         createItemListWithType("Meat", dinnerMeatItems, setDinnerMeatItems, 1, disableDinnerCheckbox),
     ];
@@ -566,6 +569,8 @@ export default function MenuScreen({route}) {
                         clearAndFetchData={clearValuesAndFetchData}
                         mealId={mealId}
                         editMenu={isEditMenu}
+                        lunchRiceItems={lunchRiceItems}
+                        dinnerRiceItems={dinnerRiceItems}
                     />
                 </View>
                 {

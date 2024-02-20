@@ -14,6 +14,7 @@ import {SelectedTab} from "../../helpers/enums/enums";
 import {getUserPointsService} from "../../services/userProfileService";
 import ClaimPointsModal from "../../components/modals/ClaimPointsModal";
 import useMenuHook from "../../services/useMenuHook";
+import {useMenuContext} from "../../context/MenuContext";
 
 export default function Checkout() {
     const [successResult, setSuccessResult] = useState({});
@@ -26,19 +27,21 @@ export default function Checkout() {
     const [points, setPoints] = useState(0);
     const [pointsCopy, setPointsCopy] = useState(0);
     const [isPointsApplied, setIsPointsApplied] = useState(false);
+    const [extraPayment, setExtraPayment] = useState(0);
+
+    const {menuLimits} = useMenuContext();
+
     const {showToast} = useToast();
     const {
         disableLunchCheckbox,
         disableDinnerCheckbox,
-        packetLimit,
-        checkPacketLimit,
         fetchDisableLunchCheckbox,
         fetchDisableDinnerCheckbox
     } = useMenuHook();
 
     useEffect(() => {
-        fetchDisableDinnerCheckbox().catch((error) => console.error('Error fetching disable dinner checkbox:', error));
-        fetchDisableLunchCheckbox().catch((error) => console.error('Error fetching disable lunch checkbox:', error));
+        fetchDisableDinnerCheckbox().catch((error) => console.log('Error fetching disable dinner checkbox:', error));
+        fetchDisableLunchCheckbox().catch((error) => console.log('Error fetching disable lunch checkbox:', error));
 
     }, [disableDinnerCheckbox, disableLunchCheckbox]);
 
@@ -148,6 +151,23 @@ export default function Checkout() {
     }
 
     useEffect(() => {
+        const calculateExtraPayment = () => {
+            const mealCountList = basket && basket.meal && basket.meal.map((meal) => meal.items.length);
+
+            for (let i = 0; i < mealCountList.length; i++) {
+                const paymentDetails = menuLimits.extra_payments[mealCountList[i].toString()];
+                if (paymentDetails && paymentDetails.payment > 0) {
+                    setExtraPayment(prev => prev + paymentDetails.payment);
+                }
+            }
+        };
+
+        if (basket.meal) {
+            calculateExtraPayment();
+        }
+    }, [basket.meal]);
+
+    useEffect(() => {
         fetchBasket().catch(
             (error) => log("error", "CheckoutScreen", "useEffect", error.message, "CheckoutScreen.js"),
         );
@@ -157,8 +177,8 @@ export default function Checkout() {
     }, []);
 
     useEffect(() => {
-        setTotalAmount(basket.totalPrice >= pointsCopy ? basket.totalPrice - pointsCopy : 0);
-    }, [pointsCopy]);
+        setTotalAmount(basket.totalPrice >= pointsCopy ? basket.totalPrice - pointsCopy + extraPayment : 0);
+    }, [pointsCopy, extraPayment]);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
@@ -202,10 +222,21 @@ export default function Checkout() {
                             </TouchableOpacity>
                         )
                     }
+
+                    {
+                        extraPayment > 0 && (
+                            <TouchableOpacity style={styles.amountContainer}>
+                                <Text style={styles.amountLeftContainer}>Packing Extra Payment</Text>
+                                <Text style={styles.amountRightContainer}>Rs {extraPayment.toFixed(2)}</Text>
+                            </TouchableOpacity>
+                        )
+                    }
+
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.amountLeftContainer}>Delivery Fee</Text>
                         <Text style={styles.amountRightContainer}>Rs {(0).toFixed(2)}</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.totalAmountLeftContainer}>Total Amount</Text>
                         <Text style={styles.totalAmountRightContainer}>Rs {totalAmount.toFixed(2)}</Text>

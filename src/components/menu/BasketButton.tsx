@@ -5,6 +5,7 @@ import {setMenuBasketService, updateBasketFromId} from '../../services/menuServi
 import {useToast} from '../../helpers/toast/Toast';
 import {useSelector} from "react-redux";
 import useMenuHook from "../../services/useMenuHook";
+import {useMenuContext} from "../../context/MenuContext";
 
 interface BasketButtonProps {
     totalCheckedItemsCount: number;
@@ -17,6 +18,8 @@ interface BasketButtonProps {
     totalCheckedSpecialItemsCount: number;
     totalCheckedSpecialItems: any[];
     isLunch: boolean;
+    lunchRiceItems: any[];
+    dinnerRiceItems: any[];
 }
 
 const BasketButton: React.FC<BasketButtonProps> = ({
@@ -30,12 +33,15 @@ const BasketButton: React.FC<BasketButtonProps> = ({
                                                        totalCheckedSpecialItemsCount,
                                                        totalCheckedSpecialItems,
                                                        isLunch,
+                                                       lunchRiceItems,
+                                                       dinnerRiceItems
                                                    }) => {
     const navigation = useNavigation();
     const {showToast} = useToast();
     const isEditMenu = useSelector((state: any) => state.menu.isEditMenu);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const {menuLimits} = useMenuContext();
 
     const {
         packetLimit,
@@ -55,12 +61,8 @@ const BasketButton: React.FC<BasketButtonProps> = ({
         setIsLoading(true);
         if (isButtonDisabled) return;
 
-        console.log("totalCheckedItemsCount", totalCheckedItemsCount);
-        console.log("totalCheckedSpecialItemsCount", totalCheckedSpecialItemsCount);
-
         if (totalCheckedItemsCount <= 0 && totalCheckedSpecialItemsCount <= 0) {
             setIsLoading(false);
-            console.log("Basket is empty");
 
             // @ts-ignore
             navigation.navigate('Basket');
@@ -71,8 +73,6 @@ const BasketButton: React.FC<BasketButtonProps> = ({
         await fetchDisableDinnerCheckbox();
 
         const isSpecial = totalCheckedSpecialItemsCount > 0;
-        console.log("isSpecial", isSpecial);
-        console.log("totalCheckedSpecialItemsCount", totalCheckedSpecialItems);
         const ids = totalCheckedSpecialItems.map(item => item.id);
 
         if (totalCheckedSpecialItemsCount > 0 || totalCheckedItemsCount > 0) {
@@ -100,8 +100,27 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             totalCheckedSpecialItemsCount = 0;
         }
 
-        if (totalCheckedItemsCount > 5) {
-            showToast('error', 'You can select only 5 dishes.');
+
+        const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
+        const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
+
+        console.log("hasCheckedLunchRiceItem", hasCheckedLunchRiceItem);
+        console.log("hasCheckedDinnerRiceItem", hasCheckedDinnerRiceItem);
+
+        if (venue === 'Lunch' && !(hasCheckedLunchRiceItem) && !isSpecial) {
+            showToast('error', `Need to select one rice item.`);
+            setIsLoading(false);
+            return;
+        }
+
+        if (venue === 'Dinner' && !(hasCheckedDinnerRiceItem) && !isSpecial) {
+            showToast('error', `Need to select one rice item.`);
+            setIsLoading(false);
+            return;
+        }
+
+        if (totalCheckedItemsCount > (menuLimits != null ? menuLimits.limits.max : 6)) {
+            showToast('error', `You can select only ${menuLimits?.limits.max} dishes.`);
             setIsLoading(false);
             return;
         }
@@ -136,9 +155,10 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             }
         }
 
-        if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5)) {
+        if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.max : 6))) {
             // Handle normal meals
             const basketItems = totalCheckedItems && totalCheckedItems.filter(item => item.checked === true);
+            console.log("this is the place",);
 
             try {
                 if (isEditMenu && mealId > 0) {
@@ -148,22 +168,22 @@ const BasketButton: React.FC<BasketButtonProps> = ({
                     // @ts-ignore
                     navigation.navigate('Basket');
 
-                } else if (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5) {
+                } else if (totalCheckedItemsCount >= (menuLimits != null ? menuLimits.limits.min : 4) && totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.max : 6)) {
                     await setMenuBasketService(basketItems, totalAmount, venue, isVeg, false);
 
                     // @ts-ignore
                     navigation.navigate('Basket');
                 } else {
-                    showToast('error', 'Please select 5 items to proceed.');
+                    showToast('error', `Please select at least ${menuLimits?.limits.min} items to proceed.`);
                 }
             } catch (error) {
                 console.error('Error updating basket:', error);
             }
         }
 
-        if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount < 5)) {
+        if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.min : 4) && totalCheckedItemsCount >= (menuLimits != null ? menuLimits.limits.max : 6))) {
             console.log("New");
-            showToast('error', 'Please select 5 items to proceed.');
+            showToast('error', `Please select ${menuLimits?.limits.max} items to proceed.`);
             setIsLoading(false);
         }
 
@@ -215,7 +235,7 @@ export default BasketButton;
 
 const styles = StyleSheet.create({
     priceContainer: {
-        backgroundColor: '#FFC42D',
+        backgroundColor: '#ffd564',
         paddingVertical: 20,
         flexDirection: 'row',
     },
@@ -224,7 +244,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     priceContainerRight: {
-        alignItems: 'center',
+        alignItems: 'flex-start',
         flex: 1,
     },
     priceContainerLeftText: {
@@ -236,5 +256,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: '#630A10',
+        paddingLeft: 40,
     },
 });

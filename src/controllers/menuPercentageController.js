@@ -15,7 +15,7 @@ export async function menuPercentageDinnerForTwoIDsController(id1, id2) {
         if (response.status === 200) return response.data;
 
     } catch (error) {
-        console.error(error.data);
+        console.log(error.data);
         log("error", "controller", "menuPercentageDinnerForTwoIDsController", error, "menuPercentageController.js");
         return ERROR_STATUS.ERROR;
     }
@@ -32,7 +32,7 @@ export async function menuPercentageLunchForTwoIDsController(id1, id2) {
         if (response.status === 200) return response.data;
 
     } catch (error) {
-        console.error(error);
+        console.log(error);
         log("error", "controller", "menuPercentageLunchForTwoIDsController", error, "menuPercentageController.js");
         return ERROR_STATUS.ERROR;
     }
@@ -52,7 +52,7 @@ export async function menuPercentageDinnerForThreeIDsController(id1, id2, id3) {
         if (response.status === 200) return response.data;
 
     } catch (error) {
-        console.error(error);
+        console.log(error);
         log("error", "controller", "menuPercentageDinnerForThreeIDsController", error.message, "menuPercentageController.js");
         return ERROR_STATUS.ERROR;
     }
@@ -67,7 +67,7 @@ export async function menuPercentageLunchForThreeIDsController(id1, id2, id3) {
         if (response.status === 200) return response.data;
 
     } catch (error) {
-        console.error(error);
+        console.log(error);
         log("error", "controller", "menuPercentageLunchForThreeIDsController", error.message, "menuPercentageController.js");
         return ERROR_STATUS.ERROR;
     }

@@ -60,10 +60,15 @@ export default function NotificationScreen() {
     };
 
     const handleNotificationPress = () => {
+        setIsLoading(true);
         changeNotificationViewState();
         fetchNotificationViewState();
+        fetchNotifications();
         setIsLoading(false);
     };
+
+    useEffect(() => {
+    }, [notifications]);
 
     if (isLoading) {
         return (
@@ -106,15 +111,15 @@ export default function NotificationScreen() {
                                         <View style={styles.notificationItem}>
                                             <View style={styles.iconContainer}>
                                                 <MaterialIcons
-                                                    name={notificationViewed ? 'notifications' : 'notifications-none'}
+                                                    name={item.state ? 'notifications' : 'notifications-none'}
                                                     size={24}
-                                                    color={notificationViewed ? '#4CAF50' : '#757575'}
+                                                    color={item.state ? '#4CAF50' : '#757575'}
                                                 />
-                                                {notificationViewed && <View style={styles.newNotificationDot}/>}
+                                                {item.state && <View style={styles.newNotificationDot}/>}
                                             </View>
                                             <View style={styles.textContainer}>
                                                 <Text
-                                                    style={[styles.notificationText, !notificationViewed && styles.notificationTextSeen]}
+                                                    style={[styles.notificationText, !item.state && styles.notificationTextSeen]}
                                                 >
                                                     {item.notification}
                                                 </Text>

@@ -35,8 +35,8 @@ const InitialScreen = () => {
             if (isFocused) {
                 Animated.timing(slideAnim, {
                     toValue: 1,
-                    duration: 6000,
-                    useNativeDriver: false,
+                    duration: 5000,
+                    useNativeDriver: true,
                 }).start();
 
                 if (visited === 'true') {
@@ -56,7 +56,7 @@ const InitialScreen = () => {
                         slideAnim.setValue(0);
 
                         navigation.navigate('Welcome');
-                    }, 7000);
+                    }, 5000);
                 }
             }
         } catch (error) {

@@ -89,7 +89,7 @@ const ItemList: React.FC<ItemListProps> = ({title, items, handleItemPress, disab
     return (
         <View>
             {filteredItemObjects && filteredItemObjects.length > 0 && (
-                <View style={styles.itemTextContainer}>
+                <View style={[styles.itemTextContainer, styles.shadowProp, styles.elevation]}>
                     <Text style={styles.itemText}>{title}</Text>
                 </View>
             )}
@@ -112,10 +112,22 @@ const ItemList: React.FC<ItemListProps> = ({title, items, handleItemPress, disab
 };
 
 const styles = StyleSheet.create({
+    shadowProp: {
+        shadowColor: '#171717',
+        shadowOffset: {width: -2, height: 4},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+    },
+    elevation: {
+        elevation: 10,
+        shadowColor: '#5b595b',
+    },
     itemTextContainer: {
         paddingHorizontal: 40,
-        backgroundColor: 'rgba(255, 245, 0, 0.5)',
-        paddingVertical: "3%",
+        backgroundColor: 'rgb(255,239,196)',
+        paddingVertical: "2%",
+        marginRight: 20,
+        borderTopRightRadius: 8,
         marginVertical: 10,
     },
     itemText: {

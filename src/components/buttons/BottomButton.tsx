@@ -31,7 +31,7 @@ const BottomButton: React.FC<BottomButtonProps> = ({buttonText, onPress, isLoadi
 
 const styles = StyleSheet.create({
     viewItemContainer: {
-        backgroundColor: '#FFC42D',
+        backgroundColor: '#ffd564',
         paddingVertical: 20,
         flexDirection: 'row',
     },

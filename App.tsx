@@ -9,6 +9,7 @@ import {ENV, ENV_STRING} from "./src/apis/lunchBucketAPI";
 import {Environments} from "./src/helpers/enums/enums";
 import * as Notifications from "expo-notifications";
 import {NotificationProvider} from "./src/context/NotificationContext";
+import {MenuProvider} from "./src/context/MenuContext";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -23,6 +24,7 @@ export default function App() {
         <Provider store={store}>
             <ToastProvider>
                 <NotificationProvider>
+                    <MenuProvider>
                     <NavigationContainer>
                         <StackNavigator/>
                     </NavigationContainer>
@@ -33,6 +35,7 @@ export default function App() {
                             </View>
                         )
                     }
+                    </MenuProvider>
                 </NotificationProvider>
             </ToastProvider>
         </Provider>

@@ -124,12 +124,12 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                 {
                     <View style={styles.descriptionContainer}>
                         <View style={styles.vegSwitchContainer}>
+                            <Text style={styles.vegText}>I am {!isVeg && "not "}a Vegetarian</Text>
                             <Switch onValueChange={toggleSwitch} value={isVeg}
                                     style={styles.vegTextSwitch}
                                     trackColor={{false: '#767577', true: '#2C984A'}}
                                     thumbColor={isVeg ? '#f4f3f4' : '#f4f3f4'}
                             />
-                            <Text style={styles.vegText}>I am {!isVeg && "not "}a Vegetarian</Text>
                         </View>
                     </View>
                 }
@@ -137,7 +137,8 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                     <View key={index} style={styles.specialMenuItemContainer}>
                         <View style={styles.specialItemLeftContainer}>
                             <View style={styles.specialMenuItem}>
-                                <View style={styles.mainSpecialItemTextContainer}>
+                                <View
+                                    style={[styles.mainSpecialItemTextContainer, styles.shadowProp, styles.elevation]}>
                                     <Text
                                         style={styles.specialMenuText}>{item && item.category && item.category.length > 0 && toTitleCase(item.category_name)}</Text>
                                 </View>
@@ -228,10 +229,17 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                     <View key={index} style={styles.specialMenuItemContainer}>
                         <View style={styles.specialItemLeftContainer}>
                             <View style={styles.specialMenuItem}>
-                                <View style={styles.mainSpecialItemTextContainer}>
+                                <View
+                                    style={[styles.mainSpecialItemTextContainer, styles.shadowProp, styles.elevation]}>
                                     <Text
                                         style={styles.specialMenuText}>{item && item.category && item.category.length > 0 && toTitleCase(item.category_name)}</Text>
                                 </View>
+
+                                {item && item.category && item.category_name === 'Lunch Bucket Authentic' && (
+                                    <EveningOnlyComponent/>
+                                )
+                                }
+
                                 {item && item.category && item.category.length > 0 && item.category.map((subItem, subIndex) => (
                                     <View key={subIndex} style={styles.specialMenuCategoryContainer}>
                                         <View style={styles.specialMenuSubItemLeftContainer}>
@@ -298,7 +306,8 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                                     item && item.category && item.category_name === 'Lunch Bucket Authentic' && (
                                         <Text style={styles.descriptionText}>
                                             🚨 Delivery time for this category will be automatically selected based on your
-                                            ordering time, with options available at 3:30 PM, 4:30 PM, and 5:30 PM.
+                                            ordering time, with options available at 3:30 PM, 4:30 PM, and 5:30 PM -
+                                            Front Gate Only.
                                         </Text>
                                     )
                                 }
@@ -319,16 +328,54 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
     );
 };
 
+const EveningOnlyComponent = () => {
+    return (
+        <View style={styles.container}>
+            <View style={styles.line}/>
+            <Text style={styles.text}>EVENING ONLY</Text>
+            <View style={styles.line}/>
+        </View>
+    );
+};
+
 const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
+    line: {
+        flex: 1,
+        height: 1,
+        backgroundColor: 'rgb(138,27,27)',
+    },
+    text: {
+        fontSize: 12,
+        paddingHorizontal: 10,
+        color: 'rgb(138,27,27)',
+        fontWeight: 'bold',
+    },
+    shadowProp: {
+        shadowColor: '#171717',
+        shadowOffset: {width: -2, height: 4},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+    },
+    elevation: {
+        elevation: 10,
+        shadowColor: '#5b595b',
+    },
     specialMenu: {},
     specialMenuItemContainer: {},
     specialItemLeftContainer: {},
     specialMenuItem: {},
     mainSpecialItemTextContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: "3%",
-        backgroundColor: 'rgba(255, 245, 0, 0.5)',
+        paddingHorizontal: 40,
+        backgroundColor: 'rgb(255,239,196)',
+        paddingVertical: "2%",
+        marginRight: 20,
+        borderTopRightRadius: 8,
+        marginVertical: 10,
     },
     specialMenuCategoryContainer: {
         flexDirection: 'row',
@@ -366,6 +413,7 @@ const styles = StyleSheet.create({
     descriptionContainer: {
         paddingHorizontal: '10%',
         flexDirection: 'row',
+        justifyContent: 'flex-end',
     },
     subSubItemsContainer: {
         flexDirection: 'row',
@@ -415,8 +463,7 @@ const styles = StyleSheet.create({
     },
     specialMenuText: {
         fontSize: 18,
-        paddingHorizontal: 40,
-        textAlign: 'left',
+        textAlign: 'center',
         color: 'rgb(138,27,27)',
         fontWeight: 'bold',
     },
@@ -512,7 +559,7 @@ const styles = StyleSheet.create({
     },
     vegText: {
         fontSize: 14,
-        paddingLeft: 10,
+        marginRight: 10,
         fontStyle: 'italic',
     },
     vegTextSwitch: {},

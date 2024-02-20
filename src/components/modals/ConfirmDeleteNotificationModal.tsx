@@ -34,7 +34,7 @@ const ConfirmDeleteNotificationModal: React.FC<ConfirmDeleteModalProps> = ({
                 >
                     <View style={styles.modal}>
                         <View style={styles.deleteModalTopContainer}>
-                            <Text style={styles.deleteModalTopContainerText}>Are you sure you want to delete this
+                            <Text style={styles.deleteModalTopContainerText}>Are you sure you want to delete all the
                                 Notifications?</Text>
                         </View>
                         <View style={styles.buttonContainer}>
