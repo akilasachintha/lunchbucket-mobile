@@ -22,6 +22,7 @@ interface SuccessResult {
         delivery_select_state: boolean;
         total_payment: number;
         extra_payment: number;
+        delivery_place_state: boolean;
     };
 }
 
@@ -47,6 +48,8 @@ const OrderPlaceSuccessfulModal: React.FC<OrderPlaceSuccessfulModalProps> = ({
                 deliveryTime: Yup.string().required("Please select a delivery time"),
                 delivery_place: Yup.string().required("Please select a delivery place"),
             });
+        } else if (successResult && successResult.time_state && !successResult.time_state.delivery_place_state) {
+            return null;
         } else {
             return Yup.object().shape({
                 delivery_place: Yup.string().required("Please select a delivery place"),
@@ -115,20 +118,20 @@ const OrderPlaceSuccessfulModal: React.FC<OrderPlaceSuccessfulModalProps> = ({
                                         </Text>
                                         <Text style={styles.earnedText}>
                                             Your Total Points:{" "}
-                                            {successResult && successResult.balance_points.toFixed(2)}
+                                            {successResult && successResult.balance_points?.toFixed(2)}
                                         </Text>
                                         <View style={styles.space}/>
                                         <Text style={styles.earnedText}>
                                             Your Total Payment: Rs.{" "}
                                             {successResult &&
                                                 successResult.time_state &&
-                                                successResult.time_state.total_payment.toFixed(2)}
+                                                successResult.time_state.total_payment?.toFixed(2)}
                                         </Text>
                                         <Text style={styles.earnedText}>
                                             Your Extra Payment: Rs.{" "}
                                             {successResult &&
                                                 successResult.time_state &&
-                                                successResult.time_state.extra_payment.toFixed(2)}
+                                                successResult.time_state.extra_payment?.toFixed(2)}
                                         </Text>
                                     </View>
                                     {successResult && successResult.time_state && successResult.time_state.delivery_select_state && (
@@ -193,38 +196,40 @@ const OrderPlaceSuccessfulModal: React.FC<OrderPlaceSuccessfulModalProps> = ({
                                         </View>
                                     )}
 
-                                    <View>
-                                        <Text style={styles.deliveryTimeText}>Select your Delivery Location.</Text>
-                                        <View style={styles.radioButtonsContainer}>
-                                            <View>
-                                                <TouchableOpacity
-                                                    style={styles.radioButton}
-                                                    onPress={() => handleChange("delivery_place")("Front Gate")}
-                                                >
-                                                    {values.delivery_place === "Front Gate" ? (
-                                                        <Radio selected={true}/>
-                                                    ) : (
-                                                        <Radio selected={false}/>
-                                                    )}
-                                                    <Text style={styles.radioText}>Front Gate</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity
-                                                    style={styles.radioButton}
-                                                    onPress={() => handleChange("delivery_place")("Back Gate")}
-                                                >
-                                                    {values.delivery_place === "Back Gate" ? (
-                                                        <Radio selected={true}/>
-                                                    ) : (
-                                                        <Radio selected={false}/>
-                                                    )}
-                                                    <Text style={styles.radioText}>Back Gate</Text>
-                                                </TouchableOpacity>
+                                    {successResult && successResult.time_state && successResult.time_state.delivery_place_state && (
+                                        <View>
+                                            <Text style={styles.deliveryTimeText}>Select your Delivery Location.</Text>
+                                            <View style={styles.radioButtonsContainer}>
+                                                <View>
+                                                    <TouchableOpacity
+                                                        style={styles.radioButton}
+                                                        onPress={() => handleChange("delivery_place")("Front Gate")}
+                                                    >
+                                                        {values.delivery_place === "Front Gate" ? (
+                                                            <Radio selected={true}/>
+                                                        ) : (
+                                                            <Radio selected={false}/>
+                                                        )}
+                                                        <Text style={styles.radioText}>Front Gate</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        style={styles.radioButton}
+                                                        onPress={() => handleChange("delivery_place")("Back Gate")}
+                                                    >
+                                                        {values.delivery_place === "Back Gate" ? (
+                                                            <Radio selected={true}/>
+                                                        ) : (
+                                                            <Radio selected={false}/>
+                                                        )}
+                                                        <Text style={styles.radioText}>Back Gate</Text>
+                                                    </TouchableOpacity>
+                                                </View>
                                             </View>
+                                            {touched.deliveryTime && errors.deliveryTime ? (
+                                                <Text style={styles.errorText}>{errors && errors.deliveryTime}</Text>
+                                            ) : null}
                                         </View>
-                                        {touched.deliveryTime && errors.deliveryTime ? (
-                                            <Text style={styles.errorText}>{errors && errors.deliveryTime}</Text>
-                                        ) : null}
-                                    </View>
+                                    )}
 
                                     <View>
                                         {isSubmitting ? (

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Image, StyleSheet, Switch, Text, View} from 'react-native';
 import {AntDesign, MaterialIcons} from "@expo/vector-icons";
 import toTitleCase from "../../helpers/strings/stringFormatter";
@@ -40,18 +40,55 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                                                      clearAndFetchData
                                                  }) => {
 
+    const [vegMenu, setVegMenu] = React.useState<MenuCategory[]>([]);
+    const [nonVegMenu, setNonVegMenu] = React.useState<MenuCategory[]>([]);
+
+    React.useEffect(() => {
+        const vegMenu = specialMenu.map(category => ({
+            ...category,
+            category: category.category.filter((item: any) => item.vegetarian)
+        })).filter(category => category.category.length > 0);
+        setVegMenu(vegMenu);
+
+        const nonVegMenu = specialMenu.map(category => ({
+            ...category,
+            category: category.category.filter((item: any) => !item.vegetarian)
+        })).filter(category => category.category.length > 0);
+        setNonVegMenu(nonVegMenu);
+    }, [specialMenu]);
+
     const handleItemPress = (mainIndex: number, subIndex: number) => {
-        setSpecialMenu((prevMenuItems) => {
-            const updatedMenuItems = [...prevMenuItems];
-            console.log(mainIndex, subIndex);
+        const menuToUpdate = isVeg ? [...vegMenu] : [...nonVegMenu];
 
-            console.log("updatedMenuItems 1", JSON.stringify(updatedMenuItems[mainIndex].category[subIndex].checked ,null, 2));
+        menuToUpdate[mainIndex].category[subIndex].checked = !menuToUpdate[mainIndex].category[subIndex].checked;
 
-            updatedMenuItems[mainIndex].category[subIndex].checked = !(updatedMenuItems[mainIndex].category[subIndex].checked);
+        if (isVeg) {
+            setVegMenu(menuToUpdate);
+        } else {
+            setNonVegMenu(menuToUpdate);
+        }
 
-            return updatedMenuItems;
+        const updatedSpecialMenu = specialMenu.map((category, idx) => {
+            if (isVeg ? category.category.some(item => item.vegetarian) : category.category.some(item => !item.vegetarian)) {
+                if (idx === mainIndex) {
+                    return {
+                        ...category,
+                        category: category.category.map((item, itemIdx) => {
+                            if (itemIdx === subIndex) {
+                                return {
+                                    ...item,
+                                    checked: menuToUpdate[mainIndex].category[subIndex].checked,
+                                };
+                            }
+                            return item;
+                        }),
+                    };
+                }
+            }
+            return category;
         });
 
+        setSpecialMenu(updatedSpecialMenu);
 
         const totalSpecialItems = calculateSpecialMenuPrice();
         setTotalSpecialPrice(totalSpecialItems);
@@ -81,11 +118,6 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
         setIsVeg((previousState) => !previousState);
     };
 
-    const filteredMenuData = specialMenu.map(category => ({
-        ...category,
-        items: category.category.filter((item: any) => item.vegetarian === isVeg)
-    })).filter(category => category.items.length > 0);
-
     return (
         <View>
             <View style={styles.specialMenu}>
@@ -101,7 +133,98 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                         </View>
                     </View>
                 }
-                {totalCheckedItemsCount <= 0 && filteredMenuData && filteredMenuData.length > 0 && filteredMenuData.map((item, index) => (
+                {totalCheckedItemsCount <= 0 && isVeg && vegMenu && vegMenu.length > 0 && vegMenu.map((item, index) => (
+                    <View key={index} style={styles.specialMenuItemContainer}>
+                        <View style={styles.specialItemLeftContainer}>
+                            <View style={styles.specialMenuItem}>
+                                <View style={styles.mainSpecialItemTextContainer}>
+                                    <Text
+                                        style={styles.specialMenuText}>{item && item.category && item.category.length > 0 && toTitleCase(item.category_name)}</Text>
+                                </View>
+                                {item && item.category && item.category.length > 0 && item.category.map((subItem, subIndex) => (
+                                    <View key={subIndex} style={styles.specialMenuCategoryContainer}>
+                                        <View style={styles.specialMenuSubItemLeftContainer}>
+                                            <View style={styles.specialMenuItemTitle}>
+                                                <View style={styles.subItemMainText}>
+                                                    <View
+                                                        style={styles.specialMenuSubItemTextContainer}>
+                                                        <Text
+                                                            style={styles.subItemText}>{subItem ? toTitleCase(subItem.type) : ''}</Text>
+                                                        <Text
+                                                            style={styles.subItemPriceText}>Rs. {subItem ? subItem.price : ''}.00</Text>
+                                                    </View>
+                                                    {subItem && !subItem.checked && !disableTime && (
+                                                        <View
+                                                            style={styles.listItemRightContainer}>
+                                                            <MaterialIcons
+                                                                name="radio-button-unchecked"
+                                                                size={30}
+                                                                color="rgba(57, 57, 57, 0.5)"
+                                                                onPress={() => handleItemPress(index, subIndex)}
+                                                            />
+                                                        </View>
+                                                    )}
+                                                    {subItem && subItem.checked && !disableTime && (
+                                                        <View
+                                                            style={styles.listItemRightContainer}>
+                                                            <AntDesign
+                                                                name="checkcircle"
+                                                                size={24}
+                                                                color="rgba(44, 152, 74, 1)"
+                                                                onPress={() => handleItemPress(index, subIndex)}
+                                                            />
+                                                        </View>
+                                                    )}
+                                                </View>
+                                            </View>
+                                            <View style={styles.specialSubMenuContainer}>
+                                                <View style={styles.specialSubMenuLeftContainer}>
+                                                    {subItem && Array.isArray(subItem.items) && subItem.items && subItem.items.length && subItem.items.length > 0 ? subItem.items.map((subSubItem, subSubIndex) => (
+                                                        <View key={subSubIndex}
+                                                              style={styles.subSubItemsContainer}>
+                                                            <Text
+                                                                style={styles.subSubItemsTextContainer}
+                                                                key={subSubIndex}>
+                                                                {toTitleCase(subSubItem)}
+                                                            </Text>
+                                                        </View>
+                                                    )) : null}
+                                                </View>
+                                                <View
+                                                    style={styles.specialSubMenuRightContainer}>
+                                                    {subItem && subItem.url ? (
+                                                        <Image
+                                                            source={{uri: subItem && subItem.url.toString() ? subItem.url.toString() : ''}}
+                                                            style={styles.specialSubMenuImage}
+                                                        />
+                                                    ) : null}
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </View>
+                                ))}
+                                {
+                                    item && item.category && item.category_name === 'Lunch Bucket Authentic' && (
+                                        <Text style={styles.descriptionText}>
+                                            🚨 Delivery time for this category will be automatically selected based on your
+                                            ordering time, with options available at 3:30 PM, 4:30 PM, and 5:30 PM.
+                                        </Text>
+                                    )
+                                }
+                                {
+                                    item.category.length <= 0 && (
+                                        <View style={styles.descriptionText}>
+                                            <Text
+                                                style={styles.descriptionText}>No {toTitleCase(item.category_name)} available</Text>
+                                        </View>
+                                    )
+                                }
+                            </View>
+                        </View>
+                    </View>
+                ))}
+
+                {totalCheckedItemsCount <= 0 && !isVeg && nonVegMenu && nonVegMenu.length > 0 && nonVegMenu.map((item, index) => (
                     <View key={index} style={styles.specialMenuItemContainer}>
                         <View style={styles.specialItemLeftContainer}>
                             <View style={styles.specialMenuItem}>
