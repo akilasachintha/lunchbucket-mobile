@@ -14,7 +14,7 @@ interface OrderPlaceSuccessfulModalProps {
     basket: any;
 }
 
-interface SuccessResult {
+export interface SuccessResult {
     earned_points: number;
     balance_points: number;
     time_state: {

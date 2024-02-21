@@ -7,6 +7,7 @@ import OrderItem from "../../components/orderItem/OrderItem";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import {useFocusEffect} from "@react-navigation/native";
+import {isEmptyArray} from "formik";
 
 export default function ListOrdersScreen() {
     const [orders, setOrders] = useState([]);
@@ -80,7 +81,7 @@ export default function ListOrdersScreen() {
                         />
                     }
                 >
-                    {orders && orders.length > 0 && orders.map((order) => (
+                    {orders && !isEmptyArray(orders) && orders.length > 0 && orders.map((order) => (
                         <OrderItem key={order.id}
                                    mealName={order.order_type === "non_vegi" || order.order_type === "vegi" ? "Choice Meal" : "Special Meal"}
                                    items={order.items}

@@ -2,6 +2,7 @@ import {getDinnerMenuController, getLunchMenuController,} from "../controllers/m
 import {addDataToLocalStorage, getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
+import {isEmptyArray} from "formik";
 
 export async function getLunchMenuService() {
     try {
@@ -10,7 +11,7 @@ export async function getLunchMenuService() {
         if (result === "error") {
             return [];
         } else {
-            return result.data.data;
+            return result && result.data && result.data.data;
         }
     } catch (error) {
         log("error", "service", "getLunchMenuService", error.message, "menuService.js");
@@ -25,7 +26,7 @@ export async function getDinnerMenuService() {
         if (result === "error") {
             return [];
         } else {
-            return result.data.data;
+            return result && result.data && result.data.data;
         }
     } catch (error) {
         log("error", "service", "getDinnerMenuService", error.message, "menuService.js");
@@ -39,7 +40,7 @@ export async function getLunchMeetMenuService(lunchMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.meat_menu_lunch.map((item) => ({
+            return await result && result.meat_menu_lunch && result.meat_menu_lunch.map((item) => ({
                 ...item,
                 checked: false,
                 disableCheckbox: true,
@@ -59,8 +60,8 @@ export async function getLunchSpecialMenuService(lunchMenu) {
         if (!result) {
             return [];
         } else {
-            return result.special_menu_lunch.map((item) => {
-                const categoryWithChecked = item.category.map((categoryItem) => ({
+            return result && !isEmptyArray(result.special_menu_lunch) && result.special_menu_lunch && result.special_menu_lunch.map((item) => {
+                const categoryWithChecked = item && !isEmptyArray(item.category) && item.category.map((categoryItem) => ({
                     ...categoryItem,
                     checked: false,
                 }));
@@ -86,7 +87,7 @@ export async function getLunchRiceMenuService(lunchMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.rice_menu_lunch.map((item) => ({
+            return await result && result.rice_menu_lunch && result.rice_menu_lunch.map((item) => ({
                 ...item,
                 type: item.type.charAt(0).toUpperCase() + item.type.slice(1),
                 checked: false,
@@ -107,7 +108,7 @@ export async function getLunchVegetableMenuService(lunchMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.vege_menu_lunch.map((item) => ({
+            return await result && result.vege_menu_lunch && result.vege_menu_lunch.map((item) => ({
                 ...item,
                 checked: false,
                 disableCheckbox: true,
@@ -129,7 +130,7 @@ export async function getLunchStewMenuService(lunchMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.stew_menu_lunch.map((item) => ({
+            return await result && result.stew_menu_lunch && result.stew_menu_lunch.map((item) => ({
                 ...item,
                 checked: false,
                 disableCheckbox: true,
@@ -150,7 +151,7 @@ export async function getDinnerMeetMenuService(dinnerMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.meat_menu_dinner.map((item) => ({
+            return await result && result.meat_menu_dinner && result.meat_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Meat',
@@ -170,7 +171,7 @@ export async function getDinnerSpecialMenuService(dinnerMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.special_menu_dinner.map((item) => ({
+            return await result && result.special_menu_dinner && result.special_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Special',
@@ -190,7 +191,7 @@ export async function getDinnerRiceMenuService(dinnerMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.rice_menu_dinner.map((item) => ({
+            return await result && result.rice_menu_dinner && result.rice_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Rice',
@@ -210,7 +211,7 @@ export async function getDinnerVegetableMenuService(dinnerMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.vege_menu_dinner.map((item) => ({
+            return await result && result.vege_menu_dinner && result.vege_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Vegetable',
@@ -230,7 +231,7 @@ export async function getDinnerStewMenuService(dinnerMenu) {
         if (!result) {
             return [];
         } else {
-            return await result.stew_menu_dinner.map((item) => ({
+            return await result && result.stew_menu_dinner && result.stew_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Condiments',
@@ -248,13 +249,12 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
     try {
 
         let existingBasket = JSON.parse(await getDataFromLocalStorage('basket') || '{}');
-        console.log("existingBasket", existingBasket);
 
         if (totalCheckedItems.length > 0) {
             let mealNumber = existingBasket.meal?.length > 0 ? existingBasket.meal.length + 1 : 1;
 
             if (isSpecial) {
-                totalCheckedItems.forEach((item) => {
+                totalCheckedItems && totalCheckedItems.forEach((item) => {
                     const id = new Date().getTime().toString();
 
                     const meal = {

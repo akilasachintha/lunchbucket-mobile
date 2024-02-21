@@ -17,10 +17,10 @@ export async function getLunchMenuController() {
             }
         });
 
-        if (response.status === 200) return response.data;
+        if (response && response.status === 200) return response && response.data;
 
     } catch (error) {
-        log("error", "controller", "getLunchMenuController", error.message, "menuController.js");
+        log("error", "controller", "getLunchMenuController", error && error.message, "menuController.js");
         return ERROR_STATUS.ERROR;
     }
 }
@@ -39,10 +39,10 @@ export async function getDinnerMenuController() {
             }
         });
 
-        if (response.status === 200) return response.data;
+        if (response && response.status === 200) return response && response.data;
 
     } catch (error) {
-        log("error", "controller", "getDinnerMenuController", error.message, "menuController.js");
+        log("error", "controller", "getDinnerMenuController", error && error.message, "menuController.js");
         return ERROR_STATUS.ERROR;
     }
 }

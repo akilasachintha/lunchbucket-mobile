@@ -3,6 +3,7 @@ import {Image, StyleSheet, Switch, Text, View} from 'react-native';
 import {AntDesign, MaterialIcons} from "@expo/vector-icons";
 import toTitleCase from "../../helpers/strings/stringFormatter";
 import {log} from "../../helpers/logs/log";
+import {isEmptyArray} from "formik";
 
 interface MenuItem {
     type: string;
@@ -97,8 +98,8 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
     const calculateSpecialMenuPrice = () => {
         let totalPrice = 0;
 
-        specialMenu.forEach((menuCategory) => {
-            menuCategory.category.forEach((menuItem) => {
+        specialMenu && specialMenu.forEach((menuCategory) => {
+            menuCategory && menuCategory.category.forEach((menuItem) => {
                 if (menuItem.checked) {
                     totalPrice += menuItem.price;
                 }
@@ -133,7 +134,7 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                         </View>
                     </View>
                 }
-                {totalCheckedItemsCount <= 0 && isVeg && vegMenu && vegMenu.length > 0 && vegMenu.map((item, index) => (
+                {totalCheckedItemsCount <= 0 && isVeg && vegMenu && vegMenu.length > 0 && !isEmptyArray(vegMenu) && vegMenu.map((item, index) => (
                     <View key={index} style={styles.specialMenuItemContainer}>
                         <View style={styles.specialItemLeftContainer}>
                             <View style={styles.specialMenuItem}>
@@ -142,7 +143,7 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                                     <Text
                                         style={styles.specialMenuText}>{item && item.category && item.category.length > 0 && toTitleCase(item.category_name)}</Text>
                                 </View>
-                                {item && item.category && item.category.length > 0 && item.category.map((subItem, subIndex) => (
+                                {item && item.category && !isEmptyArray(item.category) && item.category.length > 0 && item.category.map((subItem, subIndex) => (
                                     <View key={subIndex} style={styles.specialMenuCategoryContainer}>
                                         <View style={styles.specialMenuSubItemLeftContainer}>
                                             <View style={styles.specialMenuItemTitle}>
@@ -225,14 +226,14 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                     </View>
                 ))}
 
-                {totalCheckedItemsCount <= 0 && !isVeg && nonVegMenu && nonVegMenu.length > 0 && nonVegMenu.map((item, index) => (
+                {totalCheckedItemsCount <= 0 && !isVeg && nonVegMenu && !isEmptyArray(nonVegMenu) && nonVegMenu.length > 0 && nonVegMenu.map((item, index) => (
                     <View key={index} style={styles.specialMenuItemContainer}>
                         <View style={styles.specialItemLeftContainer}>
                             <View style={styles.specialMenuItem}>
                                 <View
                                     style={[styles.mainSpecialItemTextContainer, styles.shadowProp, styles.elevation]}>
                                     <Text
-                                        style={styles.specialMenuText}>{item && item.category && item.category.length > 0 && toTitleCase(item.category_name)}</Text>
+                                        style={styles.specialMenuText}>{item && item.category && item.category.length > 0 && !isEmptyArray(item.category) && toTitleCase(item.category_name)}</Text>
                                 </View>
 
                                 {item && item.category && item.category_name === 'Lunch Bucket Authentic' && (
@@ -240,7 +241,7 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                                 )
                                 }
 
-                                {item && item.category && item.category.length > 0 && item.category.map((subItem, subIndex) => (
+                                {item && item.category && !isEmptyArray(item.category) && item.category.length > 0 && item.category.map((subItem, subIndex) => (
                                     <View key={subIndex} style={styles.specialMenuCategoryContainer}>
                                         <View style={styles.specialMenuSubItemLeftContainer}>
                                             <View style={styles.specialMenuItemTitle}>
@@ -312,7 +313,7 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                                     )
                                 }
                                 {
-                                    item.category.length <= 0 && (
+                                    item && item.category && item.category.length <= 0 && isEmptyArray(item.category) && (
                                         <View style={styles.descriptionText}>
                                             <Text
                                                 style={styles.descriptionText}>No {toTitleCase(item.category_name)} available</Text>

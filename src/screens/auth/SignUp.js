@@ -91,7 +91,6 @@ export default function SignUp({navigation}) {
             console.log("response", response);
 
             if (response) {
-                console.log("response", response);
                 await addDataToLocalStorage('expoPushToken', response.toString());
                 setExpoPushToken(response.toString());
             } else {

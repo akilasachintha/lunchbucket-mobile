@@ -101,7 +101,7 @@ export default function MenuScreen({route}) {
                 const dinnerMenu = await getDinnerMenuService();
                 const totalDinnerVegetableItems = await getDinnerVegetableMenuService(dinnerMenu);
                 const dinnerVegetableItems = result.items.filter((item) => item.foodType === "Vegetables");
-                const updatedDinnerVegetableItems = totalDinnerVegetableItems.map((item) => {
+                const updatedDinnerVegetableItems = totalDinnerVegetableItems && totalDinnerVegetableItems.map((item) => {
                     const foundItem = dinnerVegetableItems.find((dinnerItem) => dinnerItem.id === item.id);
                     return {
                         ...item,
@@ -272,11 +272,11 @@ export default function MenuScreen({route}) {
                     const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
                     const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
-                    if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= menuLimits.limits.min - 1 || totalCheckedDinnerItemsCount >= menuLimits.limits.min - 1)) {
+                    if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1 || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1)) {
                         showToast('error', `Need to select one rice item for proceeding.`);
                         return;
-                    } else if (totalCheckedLunchItemsCount >= 6 || totalCheckedDinnerItemsCount >= menuLimits.limits.max) {
-                        showToast('error', `You can select up to ${menuLimits.limits.max} dishes only.`);
+                    } else if (totalCheckedLunchItemsCount >= 6 || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) - 1) {
+                        showToast('error', `You can select up to ${menuLimits && menuLimits.limits && menuLimits.limits.max} dishes only.`);
                         return;
                     } else {
                         newItems[index].checked = true;
@@ -374,7 +374,7 @@ export default function MenuScreen({route}) {
     const calculateTotalPrice = (itemList) => {
         let totalPrice = 0;
         let checkedItemsCount = 0;
-        itemList.forEach((item) => {
+        itemList && itemList.forEach((item) => {
             if (item.checked) {
                 totalPrice += item.price;
                 checkedItemsCount++;
@@ -383,7 +383,6 @@ export default function MenuScreen({route}) {
 
         if (menuLimits && menuLimits.extra_payments && menuLimits.extra_payments[checkedItemsCount]) {
             totalPrice += menuLimits.extra_payments[checkedItemsCount].payment;
-            console.log('extra', menuLimits.extra_payments[checkedItemsCount].payment);
         }
 
         return totalPrice;
@@ -535,8 +534,11 @@ export default function MenuScreen({route}) {
     }, [isLunch, disableLunchCheckbox, disableDinnerCheckbox]);
 
     useEffect(() => {
-
     }, [specialMenu]);
+
+    useEffect(() => {
+        clearValuesAndFetchData().catch(e => console.log(e));
+    }, []);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>

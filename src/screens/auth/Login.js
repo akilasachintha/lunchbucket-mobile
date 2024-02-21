@@ -71,7 +71,6 @@ export default function Login({navigation}) {
             }
 
             const result = await loginService(values.email, values.password);
-            console.log("login result", result);
 
             const expoPushNotificationToken = await getDataFromLocalStorage('expoPushToken');
             console.log(expoPushNotificationToken);
@@ -175,7 +174,6 @@ export default function Login({navigation}) {
     const storeToken = async () => {
         try {
             const response = await registerForPushNotificationsAsync();
-            console.log("response", response);
 
             if (response) {
                 console.log("response", response);

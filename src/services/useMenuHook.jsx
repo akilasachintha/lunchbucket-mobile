@@ -23,13 +23,10 @@ export default function useMenuHook() {
 
     }, [disableLunchCheckbox, disableDinnerCheckbox]);
 
-
     const fetchDisableLunchCheckbox = async () => {
         try {
             const token = await getDataFromLocalStorage('token');
             if (!token) {
-                setDisableLunchCheckbox(true);
-                setDisableDinnerCheckbox(true);
                 return;
             }
 
@@ -39,7 +36,7 @@ export default function useMenuHook() {
                 }
             });
 
-            if (result?.data?.data?.state) {
+            if (result && result.data && result.data.data && result.data.data.state) {
                 setDisableLunchCheckbox(false);
             }
 
@@ -53,8 +50,6 @@ export default function useMenuHook() {
         try {
             const token = await getDataFromLocalStorage('token')
             if (!token) {
-                setDisableLunchCheckbox(true);
-                setDisableDinnerCheckbox(true);
                 return;
             }
 
@@ -64,7 +59,7 @@ export default function useMenuHook() {
                 }
             });
 
-            if (result?.data?.data?.state) {
+            if (result && result.data && result.data.data && result.data.data.state) {
                 setDisableDinnerCheckbox(false);
             }
 
@@ -82,7 +77,6 @@ export default function useMenuHook() {
                 return;
             }
 
-            console.log(isLunch, isVeg, isSpecial, ids);
             const result = await lunchBucketAPI.post("checkpacketlimit", {
                     meal_type: isLunch ? "Lunch" : "Dinner",
                     order_type: isSpecial ? "special" : isVeg ? "vegi" : "nonvegi",
@@ -94,10 +88,6 @@ export default function useMenuHook() {
                     },
                 },
             );
-
-            console.log(isSpecial);
-
-            console.log(result.data);
 
             if (result?.data?.data?.state === true) {
                 setPacketLimit(false);

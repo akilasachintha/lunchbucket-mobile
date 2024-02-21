@@ -56,11 +56,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
 
             if (response.status === 200) {
                 const data = response && response.data && response.data.data && response.data.data.notification && response.data.data.notification.notifications;
-                console.log(data);
                 if (data) {
                     setNotifications(data);
                     setIsLoading(false);
-                    console.log(data);
                 }
             }
 
@@ -140,10 +138,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
 
             if (response.status === 200) {
                 const data = response && response.data && response.data.data && response.data.data.notification && response.data.data.notification.new_state;
-                console.log(data);
                 if (data) {
                     setNotificationViewed(data);
-                    console.log(data);
                 }
             }
 

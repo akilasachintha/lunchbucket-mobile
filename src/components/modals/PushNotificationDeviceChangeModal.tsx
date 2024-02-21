@@ -33,7 +33,6 @@ const PushNotificationDeviceChangeModal: React.FC<PushNotificationDeviceChangeMo
         try {
             setIsLoading(true);
             const result: any = await validatePushNotificationTokenChange();
-            console.log("result", result);
 
             if (result && result.state) {
                 setIsDeviceTokenChanged(true);

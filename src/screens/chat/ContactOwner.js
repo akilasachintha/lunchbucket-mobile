@@ -1,7 +1,8 @@
 import TopHeader from "../../components/topHeader/TopHeader";
 import {
     ActivityIndicator,
-    KeyboardAvoidingView, Platform,
+    KeyboardAvoidingView,
+    Platform,
     RefreshControl,
     SafeAreaView,
     ScrollView,
@@ -45,7 +46,7 @@ export default function ContactOwner() {
         try {
             setIsLoading(true);
             const updatedChatData = await getChatsService();
-            const formattedChatList = updatedChatData.map((chat) => ({
+            const formattedChatList = updatedChatData && updatedChatData.map((chat) => ({
                 id: chat.id,
                 view_user_state: chat.view_user_state,
                 view_admin_state: chat.view_admin_state,

@@ -2,8 +2,9 @@ import {log} from "../helpers/logs/log";
 import {addDataToLocalStorage, getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {setOderTimeController, setOrderController} from "../controllers/checkoutController";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
+import {isEmptyArray} from "formik";
 
-export async function handleCheckoutService({extraPayment}) {
+export async function handleCheckoutService() {
     try {
         const [basket, customerId] = await Promise.all([
             getDataFromLocalStorage("basket"),
@@ -36,10 +37,7 @@ export async function handleCheckoutService({extraPayment}) {
         }
 
         if (basketItems && basketItems.meal && basketItems.meal.length > 0) {
-            console.log(JSON.stringify(basketItems.meal, null, 2));
-
-            basketItems.meal.forEach((meal) => {
-                console.log(meal);
+            basketItems && basketItems.meal.forEach((meal) => {
                 if (meal.isSpecial) {
                     checkoutMenu.orders.push({
                         order_type: "special",
@@ -55,11 +53,10 @@ export async function handleCheckoutService({extraPayment}) {
                         special_meal: meal.items[0]?.id || "",
                     });
 
-                    console.log(JSON.stringify(checkoutMenu, null, 2));
                 } else if (meal.isVeg) {
                     checkoutMenu.orders.push({
                         order_type: "vegi",
-                        items: meal && meal.items && meal.items.map(item => item?.type || ""),
+                        items: meal && meal.items && !isEmptyArray(meal.items) && meal.items.map(item => item?.type || ""),
                         packet_amount: meal.count,
                         order_status: 'pending',
                         meal: meal.venue,
@@ -71,7 +68,7 @@ export async function handleCheckoutService({extraPayment}) {
                 } else {
                     checkoutMenu.orders.push({
                         order_type: "non_vegi",
-                        items:  meal && meal.items && meal.items.map(item => item?.type || ""),
+                        items:  meal && meal.items && !isEmptyArray(meal.items) && meal.items.map(item => item?.type || ""),
                         packet_amount: meal.count,
                         order_status: 'pending',
                         meal: meal.venue,
@@ -81,8 +78,6 @@ export async function handleCheckoutService({extraPayment}) {
                         potion: false,
                     });
                 }
-
-                console.log(JSON.stringify(checkoutMenu, null, 2));
             });
         } else {
             log("error", "checkoutService", "handleCheckoutService | basketItems.meal", basketItems.meal, "checkoutService.js");

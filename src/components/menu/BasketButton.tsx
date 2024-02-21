@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {setMenuBasketService, updateBasketFromId} from '../../services/menuService';
@@ -32,7 +32,6 @@ const BasketButton: React.FC<BasketButtonProps> = ({
                                                        isVeg,
                                                        totalCheckedSpecialItemsCount,
                                                        totalCheckedSpecialItems,
-                                                       isLunch,
                                                        lunchRiceItems,
                                                        dinnerRiceItems
                                                    }) => {
@@ -46,16 +45,15 @@ const BasketButton: React.FC<BasketButtonProps> = ({
     const {
         packetLimit,
         checkPacketLimit,
+    } = useMenuHook();
+
+    const {
+        isLunch,
         disableDinnerCheckbox,
         disableLunchCheckbox,
-        fetchDisableDinnerCheckbox,
         fetchDisableLunchCheckbox,
-    } = useMenuHook();
-    useEffect(() => {
-        fetchDisableDinnerCheckbox().catch((error) => console.error('Error fetching disable dinner checkbox:', error));
-        fetchDisableLunchCheckbox().catch((error) => console.error('Error fetching disable lunch checkbox:', error));
-
-    }, [disableDinnerCheckbox, disableLunchCheckbox]);
+        fetchDisableDinnerCheckbox,
+    } = useMenuContext();
 
     const handleBasketPress = async () => {
         setIsLoading(true);
@@ -64,16 +62,14 @@ const BasketButton: React.FC<BasketButtonProps> = ({
         try {
             if (isButtonDisabled) return;
 
-            if (totalCheckedItemsCount <= 0 && totalCheckedSpecialItemsCount <= 0) {
-                setIsLoading(false);
-
-                // @ts-ignore
-                navigation.navigate('Basket');
-                return;
-            }
-
             await fetchDisableLunchCheckbox();
             await fetchDisableDinnerCheckbox();
+
+            if (disableLunchCheckbox === null || disableDinnerCheckbox === null || isLunch === null) {
+                setIsLoading(false);
+                setIsButtonDisabled(false);
+                return;
+            }
 
             const isSpecial = totalCheckedSpecialItemsCount > 0;
             const ids = totalCheckedSpecialItems.map(item => item.id);
@@ -106,9 +102,6 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
             const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
-            console.log("hasCheckedLunchRiceItem", hasCheckedLunchRiceItem);
-            console.log("hasCheckedDinnerRiceItem", hasCheckedDinnerRiceItem);
-
             if (venue === 'Lunch' && !(hasCheckedLunchRiceItem) && !isSpecial) {
                 showToast('error', `Need to select one rice item.`);
                 setIsLoading(false);
@@ -126,6 +119,9 @@ const BasketButton: React.FC<BasketButtonProps> = ({
                 setIsLoading(false);
                 return;
             }
+
+            console.log("Total Checked Items Count: ", totalCheckedItemsCount);
+            console.log("Total Checked Special Items Count: ", totalCheckedSpecialItemsCount);
 
             if (totalCheckedSpecialItemsCount === 0 && totalCheckedItemsCount === 0) {
 
@@ -160,7 +156,6 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.max : 6))) {
                 // Handle normal meals
                 const basketItems = totalCheckedItems && totalCheckedItems.filter(item => item.checked === true);
-                console.log("this is the place",);
 
                 try {
                     if (isEditMenu && mealId > 0) {

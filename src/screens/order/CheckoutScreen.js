@@ -13,8 +13,8 @@ import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import {getUserPointsService} from "../../services/userProfileService";
 import ClaimPointsModal from "../../components/modals/ClaimPointsModal";
-import useMenuHook from "../../services/useMenuHook";
 import {useMenuContext} from "../../context/MenuContext";
+import {isEmptyArray} from "formik";
 
 export default function Checkout() {
     const [successResult, setSuccessResult] = useState({});
@@ -27,10 +27,7 @@ export default function Checkout() {
     const [points, setPoints] = useState(0);
     const [pointsCopy, setPointsCopy] = useState(0);
     const [isPointsApplied, setIsPointsApplied] = useState(false);
-    const [extraPayment, setExtraPayment] = useState(0);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-    const {menuLimits} = useMenuContext();
 
     const {showToast} = useToast();
     const {
@@ -38,18 +35,11 @@ export default function Checkout() {
         disableDinnerCheckbox,
         fetchDisableLunchCheckbox,
         fetchDisableDinnerCheckbox
-    } = useMenuHook();
-
-    useEffect(() => {
-        fetchDisableDinnerCheckbox().catch((error) => console.log('Error fetching disable dinner checkbox:', error));
-        fetchDisableLunchCheckbox().catch((error) => console.log('Error fetching disable lunch checkbox:', error));
-
-    }, [disableDinnerCheckbox, disableLunchCheckbox]);
+    } = useMenuContext();
 
     const fetchCheckout = async () => {
         try {
-            const result = await handleCheckoutService(extraPayment);
-            console.log('result', result);
+            const result = await handleCheckoutService();
 
             if (result === ERROR_STATUS.ERROR) {
                 log("error", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");
@@ -80,6 +70,9 @@ export default function Checkout() {
             basketItems = JSON.parse(basketItems);
 
             if (disableLunchCheckbox == null || disableDinnerCheckbox == null) {
+                setIsPlacingOrder(false);
+                setIsButtonDisabled(false);
+                setIsLoading(false);
                 return;
             }
 
@@ -124,7 +117,7 @@ export default function Checkout() {
             if (basketItems && basketItems.meal && basketItems.meal.length > 0) {
                 let totalAmount = 0;
 
-                basketItems.meal.forEach((meal) => {
+                basketItems && basketItems.meal.forEach((meal) => {
                     totalAmount += meal.totalPrice;
                 });
 
@@ -158,23 +151,6 @@ export default function Checkout() {
         }
     }
 
-    // useEffect(() => {
-    //     const calculateExtraPayment = () => {
-    //         const mealCountList = basket && basket.meal && basket.meal.map((meal) => meal.items.length);
-    //
-    //         for (let i = 0; i < mealCountList.length; i++) {
-    //             const paymentDetails = menuLimits.extra_payments[mealCountList[i].toString()];
-    //             if (paymentDetails && paymentDetails.payment > 0) {
-    //                 setExtraPayment(prev => prev + paymentDetails.payment);
-    //             }
-    //         }
-    //     };
-    //
-    //     if (basket.meal) {
-    //         calculateExtraPayment();
-    //     }
-    // }, [basket.meal]);
-
     useEffect(() => {
         fetchBasket().catch(
             (error) => log("error", "CheckoutScreen", "useEffect", error.message, "CheckoutScreen.js"),
@@ -185,8 +161,8 @@ export default function Checkout() {
     }, []);
 
     useEffect(() => {
-        setTotalAmount(basket.totalPrice >= pointsCopy ? basket.totalPrice - pointsCopy + extraPayment : 0);
-    }, [pointsCopy, extraPayment]);
+        setTotalAmount(basket.totalPrice >= pointsCopy ? basket.totalPrice - pointsCopy : 0);
+    }, [pointsCopy]);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
@@ -203,10 +179,11 @@ export default function Checkout() {
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal, index) => (
-                        <CheckoutItem key={index} index={meal.id} mealName={meal.name} mealId={meal.id}
-                                      isSpecial={meal.isSpecial}
-                                      count={meal.count} price={meal.totalPrice}/>
+                    {basket && basket.meal && basket.meal.length > 0 && !isEmptyArray(basket.meal) && basket.meal.map((meal, index) => (
+                        <CheckoutItem key={index} index={meal && meal.id} mealName={meal && meal.name}
+                                      mealId={meal && meal.id}
+                                      isSpecial={meal && meal.isSpecial}
+                                      count={meal && meal.count} price={meal && meal.totalPrice}/>
                     ))}
                 </ScrollView>
                 <View style={styles.amountListContainer}>
@@ -227,15 +204,6 @@ export default function Checkout() {
                             <TouchableOpacity style={styles.amountContainer}>
                                 <Text style={styles.amountLeftContainer}>Your Points</Text>
                                 <Text style={styles.amountRightContainer}> - Rs {pointsCopy}</Text>
-                            </TouchableOpacity>
-                        )
-                    }
-
-                    {
-                        extraPayment > 0 && (
-                            <TouchableOpacity style={styles.amountContainer}>
-                                <Text style={styles.amountLeftContainer}>Packing Extra Payment</Text>
-                                <Text style={styles.amountRightContainer}>Rs {extraPayment.toFixed(2)}</Text>
                             </TouchableOpacity>
                         )
                     }

@@ -26,13 +26,11 @@ export default function usePromotionHook() {
                 },
             });
 
-            console.log(response.data.data);
-            if (response.status === 200) {
+            if (response && response.status === 200) {
                 const data = response && response.data && response.data.data;
                 if (data && data.state) {
-                    console.log(data.state);
                     setIsPromotionModalVisible(true);
-                    setPromotionUrl(data.url);
+                    setPromotionUrl(data && data.url);
                     setIsLoading(false);
                 }
             }
@@ -57,13 +55,14 @@ export default function usePromotionHook() {
                 },
             });
 
-            console.log(response.data.data);
+            if (response && response.status === 200) {
+                console.log(response.data);
+            }
 
             setIsPromotionModalVisible(false);
             setIsLoading(false);
 
         } catch (error: any) {
-            console.log(error);
             log("error", "usePromotionHook", "hidePromotion", error.message, "useAppUpdateHook.ts");
             setIsLoading(false);
         }

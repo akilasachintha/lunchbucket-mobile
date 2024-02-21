@@ -17,8 +17,6 @@ export async function loginService(email, password) {
         const result = await loginController(email, password);
         const data = await result.data;
 
-        console.log("result", result);
-
         if (result === ERROR_STATUS.ERROR) {
             log("error", "service", "loginService | result", result, "authService.js");
             return ERROR_STATUS.LOGIN_API_ERROR;

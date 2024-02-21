@@ -18,7 +18,10 @@ export default function useAppUpdateHook() {
                 return ERROR_STATUS.ERROR;
             }
 
-            console.log(APP_VERSION);
+            if (APP_VERSION === undefined || APP_VERSION === null) {
+                return ERROR_STATUS.ERROR;
+            }
+
             const response = await lunchBucketAPI.get('update_promotionstate/' + APP_VERSION, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,13 +29,11 @@ export default function useAppUpdateHook() {
                 },
             });
 
-            console.log(response.data.data);
-            if (response.status === 200) {
+            if (response && response.status === 200) {
                 const data = response && response.data && response.data.data;
                 if (data && data.state === false) {
-                    console.log(data.state);
                     setIsUpdateModalVisible(true);
-                    setUpdateUrl(data.url);
+                    setUpdateUrl(data && data.url);
                     setIsLoading(false);
                 }
             }
