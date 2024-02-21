@@ -237,9 +237,11 @@ export default function MenuScreen({route}) {
             }
         } catch (error) {
             showToast("error", "Error fetching menus");
+            setLoading(false);
             log("error", "MenuScreen", "useEffect 1", error.message, "MenuScreen.js");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const createItemListWithType = (type, items, setItems, maxCount, disableCheckbox) => {

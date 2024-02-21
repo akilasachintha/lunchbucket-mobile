@@ -24,7 +24,7 @@ export default function BasketScreen() {
     const [isLoading, setIsLoading] = useState(false);
     const [isButtonLoading, setIsButtonLoading] = useState(false);
     const [selectedMealId, setSelectedMealId] = useState(null);
-    const [isLunch, setIsLunch] = useState(false);
+    const [isLunch, setIsLunch] = useState(null);
     const [isSubmit, setIsSubmit] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
@@ -121,11 +121,14 @@ export default function BasketScreen() {
 
         try {
             if (isSubmit) return;
-
             setIsButtonLoading(true);
 
             await fetchDisableDinnerCheckbox();
             await fetchDisableLunchCheckbox();
+
+            if (disableLunchCheckbox == null || disableDinnerCheckbox == null || isLunch == null) {
+                return;
+            }
 
             if (disableLunchCheckbox) {
                 console.log("disableLunchCheckbox", disableLunchCheckbox);

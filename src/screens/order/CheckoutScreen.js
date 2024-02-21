@@ -79,6 +79,10 @@ export default function Checkout() {
 
             basketItems = JSON.parse(basketItems);
 
+            if (disableLunchCheckbox == null || disableDinnerCheckbox == null) {
+                return;
+            }
+
             if (disableLunchCheckbox && basketItems.venue === 'Lunch') {
                 showToast('error', 'You cannot order lunch at this time.');
                 setIsPlacingOrder(false);
@@ -246,7 +250,8 @@ export default function Checkout() {
                         <Text style={styles.totalAmountRightContainer}>Rs {totalAmount.toFixed(2)}</Text>
                     </TouchableOpacity>
                 </View>
-                <BottomButton buttonText="Place Order" onPress={handleCheckout} isLoading={isPlacingOrder}/>
+                <BottomButton buttonText="Place Order" onPress={handleCheckout} isLoading={isPlacingOrder}
+                              isButtonDisabled={isButtonDisabled}/>
             </View>
         </SafeAreaView>
     )

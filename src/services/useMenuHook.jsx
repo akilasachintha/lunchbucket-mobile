@@ -4,8 +4,8 @@ import {useToast} from "../helpers/toast/Toast";
 import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export default function useMenuHook() {
-    const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
-    const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(false);
+    const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(null);
+    const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(null);
     const [packetLimit, setPacketLimit] = useState(false);
     const [isLunchHook, setIsLunchHook] = useState(false);
     const [orderTypeHook, setOrderTypeHook] = useState("vegi");
@@ -20,7 +20,6 @@ export default function useMenuHook() {
     useEffect(() => {
         fetchDisableLunchCheckbox().catch((error) => console.log(error.message));
         fetchDisableDinnerCheckbox().catch((error) => console.log(error.message));
-
 
     }, [disableLunchCheckbox, disableDinnerCheckbox]);
 
