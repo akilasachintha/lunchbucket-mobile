@@ -47,7 +47,7 @@ export default function Checkout() {
 
     const fetchCheckout = async () => {
         try {
-            const result = await handleCheckoutService();
+            const result = await handleCheckoutService(extraPayment);
             console.log('result', result);
 
             if (result === ERROR_STATUS.ERROR) {
@@ -150,22 +150,22 @@ export default function Checkout() {
         }
     }
 
-    useEffect(() => {
-        const calculateExtraPayment = () => {
-            const mealCountList = basket && basket.meal && basket.meal.map((meal) => meal.items.length);
-
-            for (let i = 0; i < mealCountList.length; i++) {
-                const paymentDetails = menuLimits.extra_payments[mealCountList[i].toString()];
-                if (paymentDetails && paymentDetails.payment > 0) {
-                    setExtraPayment(prev => prev + paymentDetails.payment);
-                }
-            }
-        };
-
-        if (basket.meal) {
-            calculateExtraPayment();
-        }
-    }, [basket.meal]);
+    // useEffect(() => {
+    //     const calculateExtraPayment = () => {
+    //         const mealCountList = basket && basket.meal && basket.meal.map((meal) => meal.items.length);
+    //
+    //         for (let i = 0; i < mealCountList.length; i++) {
+    //             const paymentDetails = menuLimits.extra_payments[mealCountList[i].toString()];
+    //             if (paymentDetails && paymentDetails.payment > 0) {
+    //                 setExtraPayment(prev => prev + paymentDetails.payment);
+    //             }
+    //         }
+    //     };
+    //
+    //     if (basket.meal) {
+    //         calculateExtraPayment();
+    //     }
+    // }, [basket.meal]);
 
     useEffect(() => {
         fetchBasket().catch(

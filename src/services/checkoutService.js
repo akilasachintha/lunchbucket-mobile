@@ -3,7 +3,7 @@ import {addDataToLocalStorage, getDataFromLocalStorage} from "../helpers/storage
 import {setOderTimeController, setOrderController} from "../controllers/checkoutController";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 
-export async function handleCheckoutService() {
+export async function handleCheckoutService({extraPayment}) {
     try {
         const [basket, customerId] = await Promise.all([
             getDataFromLocalStorage("basket"),

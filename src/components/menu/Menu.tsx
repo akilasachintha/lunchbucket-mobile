@@ -232,20 +232,20 @@ const Menu: React.FC<MenuProps> = ({
                 <FontAwesome5 name="question" size={20} color="white"/>
             </TouchableOpacity>
 
-            <View>
-                {Object.entries(menuLimits != null && menuLimits.extra_payments).map(([count, detail]) => {
-                    if (detail.payment > 0 && totalCheckedItemsCount === parseInt(count)) {
-                        return (
-                            <TouchableOpacity key={count} style={styles.extraPayment}>
-                                <Text style={styles.extraPaymentText}>
-                                    If you select {count} meals, {detail.description} is Rs {detail.payment}.
-                                </Text>
-                            </TouchableOpacity>
-                        );
-                    }
-                    return null;
-                })}
-            </View>
+            {/*<View>*/}
+            {/*    {Object.entries(menuLimits != null && menuLimits.extra_payments).map(([count, detail]) => {*/}
+            {/*        if (detail.payment > 0 && totalCheckedItemsCount === parseInt(count)) {*/}
+            {/*            return (*/}
+            {/*                <TouchableOpacity key={count} style={styles.extraPayment}>*/}
+            {/*                    <Text style={styles.extraPaymentText}>*/}
+            {/*                        If you select {count} meals, {detail.description} is Rs {detail.payment}.*/}
+            {/*                    </Text>*/}
+            {/*                </TouchableOpacity>*/}
+            {/*            );*/}
+            {/*        }*/}
+            {/*        return null;*/}
+            {/*    })}*/}
+            {/*</View>*/}
 
             <BasketButton
                 totalCheckedSpecialItems={totalCheckedSpecialItems}

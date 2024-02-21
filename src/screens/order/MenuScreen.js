@@ -371,17 +371,25 @@ export default function MenuScreen({route}) {
 
     const calculateTotalPrice = (itemList) => {
         let totalPrice = 0;
+        let checkedItemsCount = 0;
         itemList.forEach((item) => {
             if (item.checked) {
                 totalPrice += item.price;
+                checkedItemsCount++;
             }
         });
+
+        if (menuLimits && menuLimits.extra_payments && menuLimits.extra_payments[checkedItemsCount]) {
+            totalPrice += menuLimits.extra_payments[checkedItemsCount].payment;
+            console.log('extra', menuLimits.extra_payments[checkedItemsCount].payment);
+        }
+
         return totalPrice;
     };
 
     const lunchTotalPrice = useMemo(() => {
         return calculateTotalPrice(getTotalCheckedItems(lunchItemList));
-    }, [lunchRiceItems, lunchVegetableItems, lunchStewItems, lunchMeatItems,]);
+    }, [lunchRiceItems, lunchVegetableItems, lunchStewItems, lunchMeatItems]);
 
     const dinnerTotalPrice = useMemo(() => {
         return calculateTotalPrice(getTotalCheckedItems(dinnerItemList));
