@@ -59,7 +59,7 @@ export async function handleCheckoutService({extraPayment}) {
                 } else if (meal.isVeg) {
                     checkoutMenu.orders.push({
                         order_type: "vegi",
-                        items: [meal.items[0]?.type || "", meal.items[1]?.type || "", meal.items[2]?.type || "", meal.items[3]?.type || "", meal.items[4]?.type || ""],
+                        items: meal && meal.items && meal.items.map(item => item?.type || ""),
                         packet_amount: meal.count,
                         order_status: 'pending',
                         meal: meal.venue,
@@ -71,7 +71,7 @@ export async function handleCheckoutService({extraPayment}) {
                 } else {
                     checkoutMenu.orders.push({
                         order_type: "non_vegi",
-                        items: [meal.items[0]?.type || "", meal.items[1]?.type || "", meal.items[2]?.type || "", meal.items[3]?.type || "", meal.items[4]?.type || ""],
+                        items:  meal && meal.items && meal.items.map(item => item?.type || ""),
                         packet_amount: meal.count,
                         order_status: 'pending',
                         meal: meal.venue,

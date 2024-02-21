@@ -89,10 +89,10 @@ const Toast: React.FC<{ type: string; message: string }> = ({type, message}) => 
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        top: Constants.statusBarHeight || 0,
+        top: 0,
         width: '100%',
         paddingHorizontal: 20,
-        zIndex: 9999,
+        zIndex: 10,
     },
     text: {
         color: '#fff',

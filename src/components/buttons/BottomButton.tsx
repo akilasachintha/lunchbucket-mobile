@@ -1,23 +1,20 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 interface BottomButtonProps {
     buttonText: string;
     onPress: () => void;
     isLoading: boolean;
+    isButtonDisabled: boolean;
 }
 
-const BottomButton: React.FC<BottomButtonProps> = ({buttonText, onPress, isLoading}) => {
-    useEffect(() => {
-        // Your useEffect logic here
-    }, [isLoading]);
-
+const BottomButton: React.FC<BottomButtonProps> = ({buttonText, onPress, isLoading, isButtonDisabled}) => {
     return (
         <View style={styles.viewItemContainer}>
             <TouchableOpacity
                 style={styles.viewItemContainerTextContainer}
                 onPress={onPress}
-                disabled={isLoading}
+                disabled={isLoading || isButtonDisabled}
             >
                 {isLoading ? (
                     <ActivityIndicator size={28} color="#630A10"/>

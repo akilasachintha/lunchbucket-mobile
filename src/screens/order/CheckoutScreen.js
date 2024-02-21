@@ -28,6 +28,7 @@ export default function Checkout() {
     const [pointsCopy, setPointsCopy] = useState(0);
     const [isPointsApplied, setIsPointsApplied] = useState(false);
     const [extraPayment, setExtraPayment] = useState(0);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const {menuLimits} = useMenuContext();
 
@@ -67,6 +68,7 @@ export default function Checkout() {
     const handleCheckout = async () => {
         if (isPlacingOrder) return;
         setIsPlacingOrder(true);
+        setIsButtonDisabled(true);
 
         try {
             let basketItems = await getDataFromLocalStorage('basket');
@@ -102,8 +104,10 @@ export default function Checkout() {
         } catch (error) {
             log("error", "CheckoutScreen", "handleCheckout", error.message, "CheckoutScreen.js");
             showToast('warn', error);
+            setIsButtonDisabled(false);
         } finally {
             setIsPlacingOrder(false);
+            setIsButtonDisabled(false);
         }
     };
 

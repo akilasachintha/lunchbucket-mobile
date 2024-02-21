@@ -97,11 +97,11 @@ const OrderItem: React.FC<OrderItemProps> = ({
                     </View>
                     <View style={styles.listItemMainContainer}>
                         <View style={styles.bucketItemNameContainer}>
-                            <Text style={styles.bucketItemNameText}>{mealName}</Text>
+                            <Text style={styles.bucketItemNameText}>{toTitleCase(mealName)}</Text>
                             {orderType === 'special' ? (
-                                <Text style={styles.bucketItemNameSubText}>{type}</Text>
+                                <Text style={styles.bucketItemNameSubText}>{toTitleCase(type)}</Text>
                             ) : (
-                                <Text style={styles.bucketItemNameSubText}>{items && items[0]}</Text>
+                                <Text style={styles.bucketItemNameSubText}>{items && toTitleCase(items[0])}</Text>
                             )}
                         </View>
                         <View style={styles.countTextContainer}>
@@ -123,7 +123,7 @@ const OrderItem: React.FC<OrderItemProps> = ({
                 <View>
                     <TouchableOpacity style={styles.bucketItemExpandContainer} onPress={() => setOnClicked(true)}>
                         <View style={styles.bucketItemNameContainer}>
-                            <Text style={styles.bucketItemNameText}>{mealName}</Text>
+                            <Text style={styles.bucketItemNameText}>{toTitleCase(mealName)}</Text>
                         </View>
                         <View style={styles.countTextContainer}>
                             <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
@@ -154,7 +154,7 @@ const OrderItem: React.FC<OrderItemProps> = ({
                             </View>)}
                         {orderStatus && items && items.map((item, index) => (
                             <View style={styles.listItemContainer} key={index}>
-                                <Text style={styles.listItemContainerText}>{item}</Text>
+                                <Text style={styles.listItemContainerText}>{toTitleCase(item)}</Text>
                             </View>
                         ))}
                     </View>

@@ -26,6 +26,7 @@ export default function BasketScreen() {
     const [selectedMealId, setSelectedMealId] = useState(null);
     const [isLunch, setIsLunch] = useState(false);
     const [isSubmit, setIsSubmit] = useState(false);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const {
         disableLunchCheckbox,
@@ -104,120 +105,130 @@ export default function BasketScreen() {
     }, [isLunch]);
 
     const checkLunchAvailability = async () => {
-        await fetchDisableLunchCheckbox(); // Assuming this updates the disableLunchCheckbox state
-        return !disableLunchCheckbox; // Returns true if lunch is available
+        await fetchDisableLunchCheckbox();
+        return !disableLunchCheckbox;
     };
 
     const checkDinnerAvailability = async () => {
-        await fetchDisableDinnerCheckbox(); // Assuming this updates the disableDinnerCheckbox state
-        return !disableDinnerCheckbox; // Returns true if dinner is available
+        await fetchDisableDinnerCheckbox();
+        return !disableDinnerCheckbox;
     };
 
 
     const handleProceedToOrder = async () => {
         setIsSubmit(true);
+        setIsButtonDisabled(true);
 
-        if (isSubmit) return;
+        try {
+            if (isSubmit) return;
 
-        setIsButtonLoading(true);
-
-        await fetchDisableDinnerCheckbox();
-        await fetchDisableLunchCheckbox();
-
-        if (disableLunchCheckbox) {
-            console.log("disableLunchCheckbox", disableLunchCheckbox);
-            setIsLunch(false);
-        } else if (disableDinnerCheckbox) {
-            console.log("disableDinnerCheckbox", disableDinnerCheckbox);
-            setIsLunch(true);
-        }
-
-        const lunchAvailable = await checkLunchAvailability();
-        const dinnerAvailable = await checkDinnerAvailability();
-
-        if (lunchAvailable) {
-            setIsLunch(true);
-        } else if (dinnerAvailable) {
-            setIsLunch(false);
-        }
-
-        setTimeout(async () => {
+            setIsButtonLoading(true);
 
             await fetchDisableDinnerCheckbox();
             await fetchDisableLunchCheckbox();
 
             if (disableLunchCheckbox) {
                 console.log("disableLunchCheckbox", disableLunchCheckbox);
-                setIsLunch(prevState => true);
+                setIsLunch(false);
             } else if (disableDinnerCheckbox) {
                 console.log("disableDinnerCheckbox", disableDinnerCheckbox);
-                setIsLunch(prevState => false);
+                setIsLunch(true);
             }
 
-            console.log("Lunch availability: ", lunchAvailable, " | Dinner availability: ", dinnerAvailable);
-            console.log("isLunch state updated to: ", isLunch);
+            const lunchAvailable = await checkLunchAvailability();
+            const dinnerAvailable = await checkDinnerAvailability();
 
-        }, 5);
+            if (lunchAvailable) {
+                setIsLunch(true);
+            } else if (dinnerAvailable) {
+                setIsLunch(false);
+            }
 
-        console.log("disableLunchCheckbox", disableLunchCheckbox);
-        console.log("disableDinnerCheckbox", disableDinnerCheckbox);
+            setTimeout(async () => {
 
-        console.log("basket", basket);
+                await fetchDisableDinnerCheckbox();
+                await fetchDisableLunchCheckbox();
 
-        if (!basket || !basket.meal || basket.meal.length === 0) {
-            showToast("error", "Please add at least one meal to proceed.");
+                if (disableLunchCheckbox) {
+                    console.log("disableLunchCheckbox", disableLunchCheckbox);
+                    setIsLunch(() => true);
+                } else if (disableDinnerCheckbox) {
+                    console.log("disableDinnerCheckbox", disableDinnerCheckbox);
+                    setIsLunch(() => false);
+                }
+
+                console.log("Lunch availability: ", lunchAvailable, " | Dinner availability: ", dinnerAvailable);
+                console.log("isLunch state updated to: ", isLunch);
+
+            }, 5);
+
+            console.log("disableLunchCheckbox", disableLunchCheckbox);
+            console.log("disableDinnerCheckbox", disableDinnerCheckbox);
+
+            console.log("basket", basket);
+
+            if (!basket || !basket.meal || basket.meal.length === 0) {
+                showToast("error", "Please add at least one meal to proceed.");
+                setIsButtonLoading(false);
+                return;
+            }
+
+            if (basket && basket.meal && basket.meal.length === 0) {
+                showToast("error", "Please add at least one meal to proceed.");
+                setIsButtonLoading(false);
+                return;
+            }
+
+            const isLunchItems = basket && basket.meal && basket?.meal.filter(meal => meal.venue === "Lunch");
+            const isDinnerItems = basket && basket.meal && basket?.meal.filter(meal => meal.venue === "Dinner");
+
+            if (isLunchItems.length === 0 && isDinnerItems.length === 0) {
+                showToast("error", "Please add at least one meal to proceed.");
+                setIsButtonLoading(false);
+                return;
+            }
+
+            console.log("isLunchItems", isLunchItems);
+            console.log("isDinnerItems", isDinnerItems);
+
+
+            if (isLunch && isDinnerItems.length !== 0) {
+                basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Dinner");
+                await addDataToLocalStorage("basket", JSON.stringify(basket));
+                await fetchBasket();
+                showToast("error", "You can't order lunch and dinner at the same time.");
+                setIsButtonLoading(false);
+                return;
+            }
+
+            console.log("isLunch", isLunch);
+
+            if (!isLunch && isLunchItems.length !== 0) {
+                basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Lunch");
+                await addDataToLocalStorage("basket", JSON.stringify(basket));
+                await fetchBasket();
+                showToast("error", "You can't order lunch and dinner at the same time.");
+                setIsButtonLoading(false);
+                return;
+            }
+
+            if (basket && basket.meal && basket.meal.length > 0) {
+                // @ts-ignore
+                navigation.navigate('Checkout');
+                setIsButtonLoading(false);
+            } else {
+                showToast("error", "Please add at least one meal to proceed.");
+                setIsButtonLoading(false);
+            }
+
             setIsButtonLoading(false);
-            return;
+        } catch (error) {
+            log("error", "BasketScreen", "handleProceedToOrder", error.message, "BasketScreen.js");
+            setIsButtonLoading(false);
+        } finally {
+            setIsSubmit(false);
+            setIsButtonDisabled(false);
         }
-
-        if (basket && basket.meal && basket.meal.length === 0) {
-            showToast("error", "Please add at least one meal to proceed.");
-            setIsButtonLoading(false);
-            return;
-        }
-
-        const isLunchItems = basket && basket.meal && basket?.meal.filter(meal => meal.venue === "Lunch");
-        const isDinnerItems = basket && basket.meal && basket?.meal.filter(meal => meal.venue === "Dinner");
-
-        if (isLunchItems.length === 0 && isDinnerItems.length === 0) {
-            showToast("error", "Please add at least one meal to proceed.");
-            setIsButtonLoading(false);
-            return;
-        }
-
-        console.log("isLunchItems", isLunchItems);
-        console.log("isDinnerItems", isDinnerItems);
-
-
-        if (isLunch && isDinnerItems.length !== 0) {
-            basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Dinner");
-            await addDataToLocalStorage("basket", JSON.stringify(basket));
-            await fetchBasket();
-            showToast("error", "You can't order lunch and dinner at the same time.");
-            setIsButtonLoading(false);
-            return;
-        }
-
-        console.log("isLunch", isLunch);
-
-        if (!isLunch && isLunchItems.length !== 0) {
-            basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Lunch");
-            await addDataToLocalStorage("basket", JSON.stringify(basket));
-            await fetchBasket();
-            showToast("error", "You can't order lunch and dinner at the same time.");
-            setIsButtonLoading(false);
-            return;
-        }
-
-        if (basket && basket.meal && basket.meal.length > 0) {
-            navigation.navigate('Checkout');
-            setIsButtonLoading(false);
-        } else {
-            showToast("error", "Please add at least one meal to proceed.");
-            setIsButtonLoading(false);
-        }
-
-        setIsButtonLoading(false);
     }
 
     const handleAddMeal = () => {
@@ -233,7 +244,8 @@ export default function BasketScreen() {
                 <View style={styles.bodyContainer}>
                     <ActivityIndicator size="large" color="#7E1F24" style={styles.loadingIndicator}/>
                     <BorderButton text="Add Meal" onPress={() => navigation.navigate('Menu')} icon={plusIcon}/>
-                    <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={true}/>
+                    <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={true}
+                                  isButtonDisabled={isButtonDisabled}/>
                 </View>
             </SafeAreaView>
         )
@@ -272,7 +284,8 @@ export default function BasketScreen() {
                     }
                 </ScrollView>
                 <BorderButton text="Add Meal" onPress={handleAddMeal} icon={plusIcon}/>
-                <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={isButtonLoading}/>
+                <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={isButtonLoading}
+                              isButtonDisabled={isButtonDisabled}/>
             </View>
         </SafeAreaView>
     );
@@ -284,7 +297,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     bodyContainer: {
-        paddingTop: 20,
         flex: 10,
     },
     loadingIndicator: {

@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AntDesign, Fontisto} from '@expo/vector-icons';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
-import {log} from '../../helpers/logs/log';
 import {useNavigation} from '@react-navigation/native';
 import ConfirmDeleteModal from '../modals/ConfirmDeleteModal';
 import {fetchBasket} from '../../services/menuService';
 import {useDispatch, useSelector} from "react-redux";
 import {setIsEditMenuTrueReducer} from "../../redux/menuSlice";
+import toTitleCase from "../../helpers/strings/stringFormatter";
 
 interface BasketItemProps {
     venue: string;
@@ -100,7 +100,7 @@ const BasketItem: React.FC<BasketItemProps> = ({
                 setBasket(JSON.parse(basket as string));
             }
         } catch (error: any) {
-            log('Error :: BasketItem :: updateBasketCount :: ', error.message, 'BasketItem.js');
+            console.log('Error updating basket count: ', error);
         }
     };
 
@@ -149,14 +149,15 @@ const BasketItem: React.FC<BasketItemProps> = ({
                                     <Text style={styles.foodTypeText}>Non-Veg</Text>
                                 )
                             }
-                            <Text style={styles.venueText}>{venue}</Text>
+                            <Text style={styles.venueText}>{toTitleCase(venue)}</Text>
                         </View>
                         <Text>Rs. {totalAmount}</Text>
                     </View>
                     <View style={styles.bucketContainer}>
                         <View style={styles.bucketItemNameContainer}>
-                            <Text style={styles.bucketItemNameText}>{isSpecial ? mealName : 'Choice Meal'}</Text>
-                            <Text style={styles.subMenuBasketItemText}>{items && items[0].type}</Text>
+                            <Text
+                                style={styles.bucketItemNameText}>{isSpecial ? toTitleCase(mealName) : 'Choice Meal'}</Text>
+                            <Text style={styles.subMenuBasketItemText}>{items && toTitleCase(items[0].type)}</Text>
                         </View>
                         <TouchableOpacity style={styles.minusButtonTextContainer} onPress={handleMinusPress}>
                             <Fontisto name="minus-a" size={14} color="black"/>
@@ -174,7 +175,8 @@ const BasketItem: React.FC<BasketItemProps> = ({
                 <View>
                     <TouchableOpacity style={styles.bucketItemExpandContainer} onPress={() => setOnClicked(true)}>
                         <View style={styles.bucketItemNameContainer}>
-                            <Text style={styles.bucketItemNameText}>{isSpecial ? mealName : 'Choice Meal'}</Text>
+                            <Text
+                                style={styles.bucketItemNameText}>{isSpecial ? toTitleCase(mealName) : 'Choice Meal'}</Text>
                         </View>
                         <TouchableOpacity style={styles.plusButtonTextContainer} onPress={handleMinusPress}>
                             <Fontisto name="minus-a" size={14} color="black"/>
@@ -198,7 +200,7 @@ const BasketItem: React.FC<BasketItemProps> = ({
                             items.length > 0 &&
                             items.map((item) => (
                                 <View key={item.id} style={styles.listItemContainer}>
-                                    <Text style={styles.listItemContainerText}>{item.type}</Text>
+                                    <Text style={styles.listItemContainerText}>{toTitleCase(item.type)}</Text>
                                 </View>
                             ))}
                     </View>
