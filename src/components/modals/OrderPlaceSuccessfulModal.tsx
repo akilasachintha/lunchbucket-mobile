@@ -23,6 +23,8 @@ export interface SuccessResult {
         total_payment: number;
         extra_payment: number;
         delivery_place_state: boolean;
+        discount: number;
+        discount_type: string;
     };
 }
 
@@ -34,6 +36,8 @@ const OrderPlaceSuccessfulModal: React.FC<OrderPlaceSuccessfulModalProps> = ({
                                                                              }) => {
     const navigation = useNavigation();
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    console.log(successResult);
 
     const handlePress = () => {
         setIsVisible(false);
@@ -122,16 +126,24 @@ const OrderPlaceSuccessfulModal: React.FC<OrderPlaceSuccessfulModalProps> = ({
                                         </Text>
                                         <View style={styles.space}/>
                                         <Text style={styles.earnedText}>
-                                            Your Total Payment: Rs.{" "}
-                                            {successResult &&
-                                                successResult.time_state &&
-                                                successResult.time_state.total_payment?.toFixed(2)}
-                                        </Text>
-                                        <Text style={styles.earnedText}>
                                             Your Extra Payment: Rs.{" "}
                                             {successResult &&
                                                 successResult.time_state &&
                                                 successResult.time_state.extra_payment?.toFixed(2)}
+                                        </Text>
+                                        <Text style={styles.earnedTextDiscount}>
+                                            {successResult && successResult.time_state && successResult.time_state.discount_type}:
+                                            Rs.{" "}
+                                            {successResult &&
+                                                successResult.time_state &&
+                                                successResult.time_state.discount?.toFixed(2)}
+                                        </Text>
+                                        <View style={styles.space}/>
+                                        <Text style={styles.earnedTextTotal}>
+                                            Total Payment: Rs.{" "}
+                                            {successResult &&
+                                                successResult.time_state &&
+                                                successResult.time_state.total_payment?.toFixed(2)}
                                         </Text>
                                     </View>
                                     {successResult && successResult.time_state && successResult.time_state.delivery_select_state && (
@@ -299,6 +311,20 @@ const styles = StyleSheet.create({
     },
     earnedText: {
         color: "rgb(134,36,43)",
+        textAlign: "center",
+    },
+    earnedTextDiscount: {
+        color: "rgb(138,27,27)",
+        textAlign: "center",
+    },
+    earnedTextTotal: {
+        color: "rgb(134,36,43)",
+        fontSize: 16,
+        fontWeight: "bold",
+        textAlign: "center",
+        backgroundColor: "rgba(61,152,25, 0.1)",
+        padding: 8,
+        borderRadius: 10,
     },
     radioButtonsContainer: {
         marginTop: 20,
