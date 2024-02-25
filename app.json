@@ -4,7 +4,7 @@
     "description": "Online food delivery Application.",
     "slug": "lunchbucket",
     "scheme": "com.lunchbucket",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "owner": "lunchbucket",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
@@ -28,7 +28,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lunchbucket",
-      "buildNumber": "11"
+      "buildNumber": "20"
     },
     "android": {
       "adaptiveIcon": {

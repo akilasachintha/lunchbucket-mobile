@@ -1,6 +1,6 @@
 {
   "name": "lunchbucket",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "scripts": {
     "hello": "echo $NODE_ENV",
     "start": "expo start --dev-client",
@@ -23,7 +23,7 @@
     "@react-navigation/native-stack": "6.9.13",
     "@reduxjs/toolkit": "1.9.5",
     "axios": "1.6.0",
-    "expo": "^50.0.7",
+    "expo": "^50.0.0",
     "expo-constants": "~15.4.5",
     "expo-device": "~5.9.3",
     "expo-env": "1.1.1",
