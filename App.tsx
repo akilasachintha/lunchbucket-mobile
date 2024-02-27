@@ -5,8 +5,6 @@ import React from "react";
 import {store} from "./src/redux/store";
 import {Provider} from 'react-redux'
 import {StyleSheet, Text, View} from "react-native";
-import {ENV, ENV_STRING} from "./src/apis/lunchBucketAPI";
-import {Environments} from "./src/helpers/enums/enums";
 import * as Notifications from "expo-notifications";
 import {NotificationProvider} from "./src/context/NotificationContext";
 import {MenuProvider} from "./src/context/MenuContext";
@@ -28,13 +26,6 @@ export default function App() {
                     <NavigationContainer>
                         <StackNavigator/>
                     </NavigationContainer>
-                    {
-                        ENV !== Environments.PRODUCTION && (
-                            <View style={styles.environmentTextContainer}>
-                                <Text style={styles.environmentText}>{ENV_STRING}</Text>
-                            </View>
-                        )
-                    }
                     </MenuProvider>
                 </NotificationProvider>
             </ToastProvider>
