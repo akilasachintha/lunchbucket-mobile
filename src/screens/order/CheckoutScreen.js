@@ -73,7 +73,6 @@ export default function Checkout() {
                 setIsPlacingOrder(false);
                 setIsButtonDisabled(false);
                 setIsLoading(false);
-                return;
             }
 
             if (disableLunchCheckbox && basketItems.venue === 'Lunch') {

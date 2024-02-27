@@ -115,7 +115,6 @@ export default function BasketScreen() {
             if (disableLunchCheckbox == null || disableDinnerCheckbox == null || isLunch == null) {
                 setIsButtonLoading(false);
                 setIsLoading(false);
-                return;
             }
 
             if (!basket || !basket.meal || basket.meal.length === 0) {

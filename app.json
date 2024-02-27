@@ -37,7 +37,7 @@
       },
       "googleServicesFile": "./google-services.json",
       "package": "com.lunchbucket",
-      "versionCode": 30
+      "versionCode": 31
     },
     "web": {
       "favicon": "./src/assets/favicon.png"

@@ -9,6 +9,8 @@ export interface MenuContextType {
     isLunch: boolean | null;
     fetchDisableLunchCheckbox: () => Promise<void>;
     fetchDisableDinnerCheckbox: () => Promise<void>;
+    getDisableLunchCheckbox: () => Promise<boolean | null>;
+    getDisableDinnerCheckbox: () => Promise<boolean | null>;
     isLoading: boolean;
 }
 
@@ -99,8 +101,9 @@ export const MenuProvider: React.FC<MenuProviderProps> = ({children}) => {
                 }
             });
 
-            if (result && result.data && result.data.data && result.data.data.state) {
-                setDisableLunchCheckbox(false);
+            console.log(result.data);
+            if (result && result.data && result.data.data && result.data.data) {
+                setDisableLunchCheckbox(!(result && result.data && result.data.data && result.data.data.state));
             }
 
         } catch (e: any) {
@@ -125,8 +128,9 @@ export const MenuProvider: React.FC<MenuProviderProps> = ({children}) => {
                 }
             });
 
-            if (result && result.data && result.data.data && result.data.data.state) {
-                setDisableDinnerCheckbox(false);
+            console.log(result.data);
+            if (result && result.data && result.data.data && result.data.data) {
+                setDisableDinnerCheckbox(!(result && result.data && result.data.data && result.data.data.state));
             }
 
         } catch (e: any) {
@@ -135,6 +139,15 @@ export const MenuProvider: React.FC<MenuProviderProps> = ({children}) => {
         } finally {
             setIsLoading(false);
         }
+    }
+
+
+    const getDisableLunchCheckbox = async () => {
+        return disableLunchCheckbox;
+    }
+
+    const getDisableDinnerCheckbox = async () => {
+        return disableDinnerCheckbox;
     }
 
 
@@ -147,7 +160,9 @@ export const MenuProvider: React.FC<MenuProviderProps> = ({children}) => {
                 isLunch,
                 isLoading,
                 fetchDisableLunchCheckbox,
-                fetchDisableDinnerCheckbox
+                fetchDisableDinnerCheckbox,
+                getDisableLunchCheckbox,
+                getDisableDinnerCheckbox,
             }}>
             {children}
         </MenuContext.Provider>

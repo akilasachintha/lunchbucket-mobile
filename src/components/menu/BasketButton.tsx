@@ -53,6 +53,8 @@ const BasketButton: React.FC<BasketButtonProps> = ({
         disableLunchCheckbox,
         fetchDisableLunchCheckbox,
         fetchDisableDinnerCheckbox,
+        getDisableLunchCheckbox,
+        getDisableDinnerCheckbox,
     } = useMenuContext();
 
     const handleBasketPress = async () => {
@@ -62,8 +64,18 @@ const BasketButton: React.FC<BasketButtonProps> = ({
         try {
             if (isButtonDisabled) return;
 
+            if(totalCheckedItemsCount === 0 && totalCheckedSpecialItemsCount === 0) {
+                // @ts-ignore
+                navigation.navigate('Basket');
+                setIsLoading(false);
+                return;
+            }
+
             await fetchDisableLunchCheckbox();
             await fetchDisableDinnerCheckbox();
+
+            console.log("Disable Lunch Checkbox: ", await getDisableLunchCheckbox());
+            console.log("Disable Dinner Checkbox: ", await getDisableDinnerCheckbox());
 
             if (disableLunchCheckbox === null || disableDinnerCheckbox === null || isLunch === null) {
                 setIsLoading(false);
@@ -74,8 +86,11 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             const isSpecial = totalCheckedSpecialItemsCount > 0;
             const ids = totalCheckedSpecialItems.map(item => item.id);
 
+            console.log("Total Checked Special Items: ", totalCheckedSpecialItems);
+            console.log("Total Checked Items: ", totalCheckedItems);
             if (totalCheckedSpecialItemsCount > 0 || totalCheckedItemsCount > 0) {
                 await checkPacketLimit(isLunch, isVeg, isSpecial, ids);
+                console.log("Packet Limit: ", packetLimit);
             }
 
             if ((totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && packetLimit) {

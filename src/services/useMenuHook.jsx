@@ -89,15 +89,13 @@ export default function useMenuHook() {
                 },
             );
 
-            if (result?.data?.data?.state === true) {
-                setPacketLimit(false);
-            } else {
-                setPacketLimit(true);
+            console.log(result?.data?.data);
+            if (result?.data?.data) {
+                setPacketLimit(!(result?.data?.data?.state));
             }
 
         } catch (e) {
             console.log(e?.response?.data?.data?.message);
-            setPacketLimit(true);
             showToast('error', e && e.response && e.response.data && e.response.data.data && e?.response?.data?.data?.message);
         }
     }

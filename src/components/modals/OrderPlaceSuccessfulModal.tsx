@@ -25,6 +25,7 @@ export interface SuccessResult {
         delivery_place_state: boolean;
         discount: number;
         discount_type: string;
+        delivery_times: string[];
     };
 }
 
@@ -32,7 +33,6 @@ const OrderPlaceSuccessfulModal: React.FC<OrderPlaceSuccessfulModalProps> = ({
                                                                                  isVisible,
                                                                                  setIsVisible,
                                                                                  successResult,
-                                                                                 basket,
                                                                              }) => {
     const navigation = useNavigation();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,13 +50,14 @@ const OrderPlaceSuccessfulModal: React.FC<OrderPlaceSuccessfulModalProps> = ({
         if (successResult && successResult.time_state && successResult.time_state.delivery_select_state) {
             return Yup.object().shape({
                 deliveryTime: Yup.string().required("Please select a delivery time"),
-                delivery_place: Yup.string().required("Please select a delivery place"),
             });
-        } else if (successResult && successResult.time_state && !successResult.time_state.delivery_place_state) {
-            return null;
-        } else {
+        } else if (successResult && successResult.time_state && successResult.time_state.delivery_place_state) {
             return Yup.object().shape({
                 delivery_place: Yup.string().required("Please select a delivery place"),
+            });
+        } else {
+            return Yup.object().shape({
+                null: Yup.string().nullable(),
             });
         }
     };
@@ -150,57 +151,18 @@ const OrderPlaceSuccessfulModal: React.FC<OrderPlaceSuccessfulModalProps> = ({
                                         <View>
                                             <Text style={styles.deliveryTimeText}>Select your Delivery time.</Text>
                                             <View style={styles.radioButtonsContainer}>
-                                                {basket.venue === "Dinner" ? (
-                                                    <View>
+                                                <View>
+                                                    {successResult && successResult.time_state && successResult.time_state.delivery_times && successResult.time_state.delivery_times.map((time) => (
                                                         <TouchableOpacity
+                                                            key={time}
                                                             style={styles.radioButton}
-                                                            onPress={() => handleChange("deliveryTime")("7:30 PM")}
+                                                            onPress={() => handleChange("deliveryTime")(time.toString())}
                                                         >
-                                                            {values.deliveryTime === "7:30 PM" ? (
-                                                                <Radio selected={true}/>
-                                                            ) : (
-                                                                <Radio selected={false}/>
-                                                            )}
-                                                            <Text style={styles.radioText}>7:30 PM</Text>
+                                                            <Radio selected={values.deliveryTime === time.toString()}/>
+                                                            <Text style={styles.radioText}>{time}</Text>
                                                         </TouchableOpacity>
-                                                        <TouchableOpacity
-                                                            style={styles.radioButton}
-                                                            onPress={() => handleChange("deliveryTime")("8:30 PM")}
-                                                        >
-                                                            {values.deliveryTime === "8:30 PM" ? (
-                                                                <Radio selected={true}/>
-                                                            ) : (
-                                                                <Radio selected={false}/>
-                                                            )}
-                                                            <Text style={styles.radioText}>8:30 PM</Text>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                ) : (
-                                                    <View>
-                                                        <TouchableOpacity
-                                                            style={styles.radioButton}
-                                                            onPress={() => handleChange("deliveryTime")("11:00 AM")}
-                                                        >
-                                                            {values.deliveryTime === "11:00 AM" ? (
-                                                                <Radio selected={true}/>
-                                                            ) : (
-                                                                <Radio selected={false}/>
-                                                            )}
-                                                            <Text style={styles.radioText}>11:00 AM</Text>
-                                                        </TouchableOpacity>
-                                                        <TouchableOpacity
-                                                            style={styles.radioButton}
-                                                            onPress={() => handleChange("deliveryTime")("12:30 PM")}
-                                                        >
-                                                            {values.deliveryTime === "12:30 PM" ? (
-                                                                <Radio selected={true}/>
-                                                            ) : (
-                                                                <Radio selected={false}/>
-                                                            )}
-                                                            <Text style={styles.radioText}>12:30 PM</Text>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                )}
+                                                    ))}
+                                                </View>
                                             </View>
                                             {touched && errors && touched.deliveryTime && errors.deliveryTime ? (
                                                 <Text style={styles.errorText}>{errors && errors.deliveryTime}</Text>
