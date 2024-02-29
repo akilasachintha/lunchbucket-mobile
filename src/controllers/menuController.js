@@ -17,7 +17,11 @@ export async function getLunchMenuController() {
             }
         });
 
-        if (response && response.status === 200) return response && response.data;
+        if (response && response.status === 200) {
+            return response && response.data;
+        } else {
+            return ERROR_STATUS.ERROR;
+        }
 
     } catch (error) {
         log("error", "controller", "getLunchMenuController", error && error.message, "menuController.js");

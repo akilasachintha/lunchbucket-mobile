@@ -1,6 +1,7 @@
 import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
+import {getLunchMenuController} from "../controllers/menuController";
 
 export interface MenuContextType {
     menuLimits: Configuration | null;
@@ -49,6 +50,7 @@ export const MenuProvider: React.FC<MenuProviderProps> = ({children}) => {
         fetchMenuLimits().catch(e => console.log(e));
         fetchDisableLunchCheckbox().catch(e => console.log(e));
         fetchDisableDinnerCheckbox().catch(e => console.log(e));
+        getLunchMenuController().catch(e => console.log(e));
 
         if (disableLunchCheckbox === false) {
             setIsLunch(true);
