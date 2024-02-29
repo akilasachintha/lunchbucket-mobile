@@ -27,6 +27,7 @@ const PATHS = {
     tricks: require('../../../src/assets/images/settings/tricks.jpeg'),
     notifications: require('../../../src/assets/images/settings/notifications.jpg'),
     i211: require('../../../src/assets/i211.png'),
+    error: require('../../../src/assets/images/error.png'),
 }
 
 export default PATHS;

@@ -15,6 +15,7 @@ import {getUserPointsService} from "../../services/userProfileService";
 import ClaimPointsModal from "../../components/modals/ClaimPointsModal";
 import {useMenuContext} from "../../context/MenuContext";
 import {isEmptyArray} from "formik";
+import {useErrorContext} from "../../context/ErrorContext";
 
 export default function Checkout() {
     const [successResult, setSuccessResult] = useState({});
@@ -28,8 +29,9 @@ export default function Checkout() {
     const [pointsCopy, setPointsCopy] = useState(0);
     const [isPointsApplied, setIsPointsApplied] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
+    const {showError} = useErrorContext();
     const {showToast} = useToast();
+
     const {
         disableLunchCheckbox,
         disableDinnerCheckbox,
@@ -49,7 +51,7 @@ export default function Checkout() {
                 return true;
             }
         } catch (error) {
-            showToast('error', error.message);
+            showError(error && error.message);
             log("warn", "CheckoutScreen", "fetchCheckout", error.message, "CheckoutScreen.js");
             return false;
         }
@@ -76,13 +78,13 @@ export default function Checkout() {
             }
 
             if (disableLunchCheckbox && basketItems.venue === 'Lunch') {
-                showToast('error', 'You cannot order lunch at this time.');
+                showError('You cannot order lunch at this time.');
                 setIsPlacingOrder(false);
                 return;
             }
 
             if (disableDinnerCheckbox && basketItems.venue === 'Dinner') {
-                showToast('error', 'You cannot order dinner at this time.');
+                showError('You cannot order dinner at this time.');
                 setIsPlacingOrder(false);
                 return;
             }
@@ -99,7 +101,6 @@ export default function Checkout() {
 
         } catch (error) {
             log("error", "CheckoutScreen", "handleCheckout", error.message, "CheckoutScreen.js");
-            showToast('warn', error);
             setIsButtonDisabled(false);
         } finally {
             setIsPlacingOrder(false);
@@ -131,7 +132,6 @@ export default function Checkout() {
             }
             setBasket(basketItems);
         } catch (error) {
-            showToast('warn', error);
             log("warn", "CheckoutScreen", "fetchBasket", error.message, "CheckoutScreen.js");
         }
     };

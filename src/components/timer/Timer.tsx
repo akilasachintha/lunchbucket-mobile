@@ -15,7 +15,7 @@ const Timer: React.FC<TimerProps> = ({title, disableTime, isLoading}) => {
     } = useFetchRemainingTimes();
 
     const renderTimerText = () => {
-        const time = title === 'Lunch' ? (disableTime ? '7 PM' : '12:30 PM') : disableTime ? '12:30 PM' : '7 PM';
+        const time = title === 'Lunch' ? (disableTime ? '9 PM' : '1:30 PM') : disableTime ? '1:30 PM' : '9 PM';
         return (
             <Text>
                 You can{disableTime ? ' not' : ''} place {title} orders until {time}

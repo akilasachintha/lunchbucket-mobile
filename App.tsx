@@ -4,10 +4,12 @@ import {ToastProvider} from "./src/helpers/toast/Toast";
 import React from "react";
 import {store} from "./src/redux/store";
 import {Provider} from 'react-redux'
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet} from "react-native";
 import * as Notifications from "expo-notifications";
 import {NotificationProvider} from "./src/context/NotificationContext";
 import {MenuProvider} from "./src/context/MenuContext";
+import {ErrorProvider} from "./src/context/ErrorContext";
+import ErrorScreen from "./src/screens/ErrorScreen";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -20,20 +22,22 @@ Notifications.setNotificationHandler({
 export default function App() {
     return (
         <Provider store={store}>
-            <ToastProvider>
-                <NotificationProvider>
-                    <MenuProvider>
-                    <NavigationContainer>
-                        <StackNavigator/>
-                    </NavigationContainer>
-                    </MenuProvider>
-                </NotificationProvider>
-            </ToastProvider>
+            <ErrorProvider>
+                <ToastProvider>
+                    <NotificationProvider>
+                        <MenuProvider>
+                            <NavigationContainer>
+                                <StackNavigator/>
+                                <ErrorScreen/>
+                            </NavigationContainer>
+                        </MenuProvider>
+                    </NotificationProvider>
+                </ToastProvider>
+            </ErrorProvider>
         </Provider>
     );
 }
-
-const styles = StyleSheet.create({
+StyleSheet.create({
     environmentTextContainer: {
         position: 'absolute',
         top: 30,
@@ -48,4 +52,3 @@ const styles = StyleSheet.create({
         fontSize: 7,
     },
 });
-

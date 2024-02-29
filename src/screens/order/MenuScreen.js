@@ -36,6 +36,7 @@ import useAppUpdateHook from "../../services/useAppUpdateHook";
 import PromotionModal from "../../components/modals/PromotionModal";
 import usePromotionHook from "../../services/usePromotionHook";
 import {useMenuContext} from "../../context/MenuContext";
+import {useErrorContext} from "../../context/ErrorContext";
 
 export default function MenuScreen({route}) {
     const {showToast} = useToast();
@@ -74,6 +75,7 @@ export default function MenuScreen({route}) {
     const [dinnerVegetableItems, setDinnerVegetableItems] = useState([]);
     const [dinnerStewItems, setDinnerStewItems] = useState([]);
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
+    const {showError} = useErrorContext();
 
     const {
         disableLunchCheckbox,
@@ -244,7 +246,7 @@ export default function MenuScreen({route}) {
         }
     };
 
-    const createItemListWithType = (type, items, setItems, maxCount, disableCheckbox) => {
+    const createItemListWithType = (type, items, setItems, disableCheckbox) => {
         const handleItemPress = (index) => {
             const newItems = [...items];
             const itemChecked = newItems[index].checked;
@@ -265,7 +267,8 @@ export default function MenuScreen({route}) {
                         setSelectedItems([...selectedItems, newItems[index]]);
                         newItems[index].checked = true;
                     } else if (type === "Rice" && itemCount > 0) {
-                        showToast('error', `You can select one rice item only.`);
+                        // showToast('error', `You can select one rice item only.`);
+                        showError(`You can select one rice item only.`);
                         return;
                     }
 
@@ -273,10 +276,13 @@ export default function MenuScreen({route}) {
                     const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
                     if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1 || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1)) {
-                        showToast('error', `Need to select one rice item for proceeding.`);
+                        // showToast('error', `Need to select one rice item for proceeding.`);
+                        // showToast('error', `Need to select one rice item for proceeding.`);
+                        showError(`Need to select one rice item for proceeding.`);
                         return;
                     } else if (totalCheckedLunchItemsCount >= 6 || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) - 1) {
-                        showToast('error', `You can select up to ${menuLimits && menuLimits.limits && menuLimits.limits.max} dishes only.`);
+                        // showToast('error', `You can select up to ${menuLimits && menuLimits.limits && menuLimits.limits.max} dishes only.`);
+                        showError(`You can select up to ${menuLimits && menuLimits.limits && menuLimits.limits.max} dishes only.`);
                         return;
                     } else {
                         newItems[index].checked = true;
@@ -416,12 +422,28 @@ export default function MenuScreen({route}) {
         setRefreshing(false);
     };
 
+    function addSuitabilityToItems(menuArray, suitabilityData) {
+        return menuArray && menuArray.map(item => {
+            const percentageItem = suitabilityData && suitabilityData.find(percentage => percentage.id.id === item.id);
+            if (percentageItem) {
+                return {
+                    ...item,
+                    percentage: percentageItem.suitability,
+                };
+            }
+            return item;
+        });
+    }
+
+    function addSuitabilityToItemsZero(menuArray) {
+        return menuArray?.map(item => ({...item, percentage: 0})) || [];
+    }
+
     useFocusEffect(
         React.useCallback(() => {
             if (!isEditMenu) {
                 clearValuesAndFetchData()
                     .catch((error) => {
-                        showToast('error', 'Error fetching menus');
                         log('error', 'MenuScreen', 'useEffect 2', error.message, 'MenuScreen.js');
                     });
             }
@@ -494,23 +516,6 @@ export default function MenuScreen({route}) {
         }
     }, [selectedItems]);
 
-    function addSuitabilityToItems(menuArray, suitabilityData) {
-        return menuArray && menuArray.map(item => {
-            const percentageItem = suitabilityData && suitabilityData.find(percentage => percentage.id.id === item.id);
-            if (percentageItem) {
-                return {
-                    ...item,
-                    percentage: percentageItem.suitability,
-                };
-            }
-            return item;
-        });
-    }
-
-    function addSuitabilityToItemsZero(menuArray) {
-        return menuArray?.map(item => ({...item, percentage: 0})) || [];
-    }
-
     useEffect(() => {
         if (isEditMenu && route.params && route.params.mealId > 0) {
             setMealId(route.params.mealId);
@@ -535,10 +540,6 @@ export default function MenuScreen({route}) {
 
     useEffect(() => {
     }, [specialMenu]);
-
-    useEffect(() => {
-        clearValuesAndFetchData().catch(e => console.log(e));
-    }, []);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>

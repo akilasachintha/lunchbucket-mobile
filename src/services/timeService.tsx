@@ -42,8 +42,8 @@ const useFetchRemainingTimes = (): FetchRemainingTimesResult => {
 
             const updateRemainingTime = () => {
                 const currentTime: Moment = moment.utc();
-                const lunchTimeEnd: Moment = moment.utc().set({hour: 13, minute: 30, second: 0});
-                const dinnerTimeStart: Moment = moment.utc().set({hour: 7, minute: 0, second: 0});
+                const lunchTimeEnd: Moment = moment.utc().set({hour: 15, minute: 30, second: 0}); // 9 PM
+                const dinnerTimeStart: Moment = moment.utc().set({hour: 8, minute: 0, second: 0}); // 1.30 AM
 
                 let remainingTime: number;
                 if (currentTime.isBefore(dinnerTimeStart)) {

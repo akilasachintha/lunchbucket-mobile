@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {useToast} from "../helpers/toast/Toast";
 import {lunchBucketAPI} from "../apis/lunchBucketAPI";
+import {useErrorContext} from "../context/ErrorContext";
 
 export default function useMenuHook() {
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(null);
@@ -9,6 +10,7 @@ export default function useMenuHook() {
     const [packetLimit, setPacketLimit] = useState(false);
     const [isLunchHook, setIsLunchHook] = useState(false);
     const [orderTypeHook, setOrderTypeHook] = useState("vegi");
+    const {showError} = useErrorContext();
 
     const {showToast} = useToast();
 
@@ -96,7 +98,8 @@ export default function useMenuHook() {
 
         } catch (e) {
             console.log(e?.response?.data?.data?.message);
-            showToast('error', e && e.response && e.response.data && e.response.data.data && e?.response?.data?.data?.message);
+            showError(e && e.response && e.response.data && e.response.data.data && e?.response?.data?.data?.message);
+            // showToast('error', e && e.response && e.response.data && e.response.data.data && e?.response?.data?.data?.message);
         }
     }
 

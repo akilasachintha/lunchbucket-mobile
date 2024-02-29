@@ -1,6 +1,7 @@
 import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
+import {useErrorContext} from "./ErrorContext";
 
 export interface MenuContextType {
     menuLimits: Configuration | null;
@@ -44,11 +45,13 @@ export const MenuProvider: React.FC<MenuProviderProps> = ({children}) => {
     const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState<boolean | null>(null);
     const [isLunch, setIsLunch] = useState<boolean | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const {showError} = useErrorContext();
 
     useEffect(() => {
         fetchMenuLimits().catch(e => console.log(e));
         fetchDisableLunchCheckbox().catch(e => console.log(e));
         fetchDisableDinnerCheckbox().catch(e => console.log(e));
+        showError('Error fetching menu limits');
 
         if (disableLunchCheckbox === false) {
             setIsLunch(true);

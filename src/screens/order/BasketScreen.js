@@ -15,6 +15,7 @@ import {useDispatch} from "react-redux";
 import {setIsEditMenuFalseReducer} from "../../redux/menuSlice";
 import {useMenuContext} from "../../context/MenuContext";
 import {isEmptyArray} from "formik";
+import {useErrorContext} from "../../context/ErrorContext";
 
 export default function BasketScreen() {
     const {showToast} = useToast();
@@ -28,6 +29,7 @@ export default function BasketScreen() {
     const [isSubmit, setIsSubmit] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [isLoadingMenu, setIsLoadingMenu] = useState(false);
+    const {showError} = useErrorContext();
 
     const {
         disableLunchCheckbox,
@@ -118,13 +120,13 @@ export default function BasketScreen() {
             }
 
             if (!basket || !basket.meal || basket.meal.length === 0) {
-                showToast("error", "Please add at least one meal to proceed.");
+                showError("Please add at least one meal to proceed.");
                 setIsButtonLoading(false);
                 return;
             }
 
             if (basket && basket.meal && basket.meal.length === 0) {
-                showToast("error", "Please add at least one meal to proceed.");
+                showError("Please add at least one meal to proceed.");
                 setIsButtonLoading(false);
                 return;
             }
@@ -133,7 +135,7 @@ export default function BasketScreen() {
             const isDinnerItems = basket && basket.meal && basket?.meal.filter(meal => meal.venue === "Dinner");
 
             if (isLunchItems.length === 0 && isDinnerItems.length === 0) {
-                showToast("error", "Please add at least one meal to proceed.");
+                showError("Please add at least one meal to proceed.");
                 setIsButtonLoading(false);
                 return;
             }
@@ -142,7 +144,7 @@ export default function BasketScreen() {
                 basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Dinner");
                 await addDataToLocalStorage("basket", JSON.stringify(basket));
                 await fetchBasket();
-                showToast("error", "You can't order lunch and dinner at the same time.");
+                showError("You can't order lunch and dinner at the same time.");
                 setIsButtonLoading(false);
                 return;
             }
@@ -151,7 +153,7 @@ export default function BasketScreen() {
                 basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Lunch");
                 await addDataToLocalStorage("basket", JSON.stringify(basket));
                 await fetchBasket();
-                showToast("error", "You can't order lunch and dinner at the same time.");
+                showError("You can't order lunch and dinner at the same time.");
                 setIsButtonLoading(false);
                 return;
             }
@@ -163,7 +165,7 @@ export default function BasketScreen() {
 
                 setIsButtonLoading(false);
             } else {
-                showToast("error", "Please add at least one meal to proceed.");
+                showError("Please add at least one meal to proceed.");
                 setIsButtonLoading(false);
             }
 

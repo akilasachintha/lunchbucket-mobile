@@ -6,6 +6,7 @@ import {useToast} from '../../helpers/toast/Toast';
 import {useSelector} from "react-redux";
 import useMenuHook from "../../services/useMenuHook";
 import {useMenuContext} from "../../context/MenuContext";
+import {useErrorContext} from "../../context/ErrorContext";
 
 interface BasketButtonProps {
     totalCheckedItemsCount: number;
@@ -41,6 +42,7 @@ const BasketButton: React.FC<BasketButtonProps> = ({
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const {menuLimits} = useMenuContext();
+    const {showError} = useErrorContext();
 
     const {
         packetLimit,
@@ -74,9 +76,6 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             await fetchDisableLunchCheckbox();
             await fetchDisableDinnerCheckbox();
 
-            console.log("Disable Lunch Checkbox: ", await getDisableLunchCheckbox());
-            console.log("Disable Dinner Checkbox: ", await getDisableDinnerCheckbox());
-
             if (disableLunchCheckbox === null || disableDinnerCheckbox === null || isLunch === null) {
                 setIsLoading(false);
                 setIsButtonDisabled(false);
@@ -86,11 +85,8 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             const isSpecial = totalCheckedSpecialItemsCount > 0;
             const ids = totalCheckedSpecialItems.map(item => item.id);
 
-            console.log("Total Checked Special Items: ", totalCheckedSpecialItems);
-            console.log("Total Checked Items: ", totalCheckedItems);
             if (totalCheckedSpecialItemsCount > 0 || totalCheckedItemsCount > 0) {
                 await checkPacketLimit(isLunch, isVeg, isSpecial, ids);
-                console.log("Packet Limit: ", packetLimit);
             }
 
             if ((totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && packetLimit) {
@@ -99,13 +95,15 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             }
 
             if (venue === 'Lunch' && disableLunchCheckbox) {
-                showToast('error', 'Sorry, Lunch time exceeded.');
+                // showToast('error', 'Sorry, Lunch time exceeded.');
+                showError('Sorry, Lunch time exceeded.');
                 setIsLoading(false);
                 return;
             }
 
             if (venue === 'Dinner' && disableDinnerCheckbox) {
-                showToast('error', 'Sorry, Dinner time exceeded.');
+                // showToast('error', 'Sorry, Dinner time exceeded.');
+                showError('Sorry, Dinner time exceeded.');
                 setIsLoading(false);
                 return;
             }
@@ -118,25 +116,25 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
             if (venue === 'Lunch' && !(hasCheckedLunchRiceItem) && !isSpecial) {
-                showToast('error', `Need to select one rice item.`);
+                // showToast('error', `Need to select one rice item.`);
+                showError('Need to select one rice item.');
                 setIsLoading(false);
                 return;
             }
 
             if (venue === 'Dinner' && !(hasCheckedDinnerRiceItem) && !isSpecial) {
-                showToast('error', `Need to select one rice item.`);
+                // showToast('error', `Need to select one rice item.`);
+                showError('Need to select one rice item.');
                 setIsLoading(false);
                 return;
             }
 
             if (totalCheckedItemsCount > (menuLimits != null ? menuLimits.limits.max : 6)) {
-                showToast('error', `You can select only ${menuLimits?.limits.max} dishes.`);
+                // showToast('error', `You can select only ${menuLimits?.limits.max} dishes.`);
+                showError(`You can select only ${menuLimits?.limits.max} dishes.`);
                 setIsLoading(false);
                 return;
             }
-
-            console.log("Total Checked Items Count: ", totalCheckedItemsCount);
-            console.log("Total Checked Special Items Count: ", totalCheckedSpecialItemsCount);
 
             if (totalCheckedSpecialItemsCount === 0 && totalCheckedItemsCount === 0) {
 
@@ -186,7 +184,8 @@ const BasketButton: React.FC<BasketButtonProps> = ({
                         // @ts-ignore
                         navigation.navigate('Basket');
                     } else {
-                        showToast('error', `Please select at least ${menuLimits?.limits.min} items to proceed.`);
+                        showError(`Please select at least ${menuLimits && menuLimits.limits && menuLimits?.limits.min} items to proceed.`);
+                        // showToast('error', `Please select at least ${menuLimits && menuLimits.limits && menuLimits?.limits.min} items to proceed.`);
                     }
                 } catch (error) {
                     console.error('Error updating basket:', error);
@@ -195,7 +194,8 @@ const BasketButton: React.FC<BasketButtonProps> = ({
 
             if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.min : 4) && totalCheckedItemsCount >= (menuLimits != null ? menuLimits.limits.max : 6))) {
                 console.log("New");
-                showToast('error', `Please select ${menuLimits?.limits.max} items to proceed.`);
+                // showToast('error', `Please select ${menuLimits && menuLimits.limits && menuLimits?.limits.max} items to proceed.`);
+                showError(`Please select ${menuLimits && menuLimits.limits && menuLimits?.limits.max} items to proceed.`);
                 setIsLoading(false);
             }
 
