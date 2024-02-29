@@ -24,10 +24,10 @@ export default function ListOrdersScreen() {
         setRefreshing(false);
     }, []);
 
-
     const fetchOrders = async () => {
         setLoading(true);
         const response = await getOrdersService();
+        console.log(response);
         setOrders(response);
         setLoading(false);
     }
