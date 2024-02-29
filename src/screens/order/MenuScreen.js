@@ -277,10 +277,9 @@ export default function MenuScreen({route}) {
 
                     if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1 || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1)) {
                         // showToast('error', `Need to select one rice item for proceeding.`);
-                        // showToast('error', `Need to select one rice item for proceeding.`);
                         showError(`Need to select one rice item for proceeding.`);
                         return;
-                    } else if (totalCheckedLunchItemsCount >= 6 || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) - 1) {
+                    } else if ((totalCheckedLunchItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) - 1)) {
                         // showToast('error', `You can select up to ${menuLimits && menuLimits.limits && menuLimits.limits.max} dishes only.`);
                         showError(`You can select up to ${menuLimits && menuLimits.limits && menuLimits.limits.max} dishes only.`);
                         return;

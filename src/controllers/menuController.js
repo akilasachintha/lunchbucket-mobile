@@ -24,7 +24,7 @@ export async function getLunchMenuController() {
         }
 
     } catch (error) {
-        log("error", "controller", "getLunchMenuController", error && error.message, "menuController.js");
+        log("error", "controller", "getLunchMenuController", error, "menuController.js");
         return ERROR_STATUS.ERROR;
     }
 }
@@ -46,7 +46,7 @@ export async function getDinnerMenuController() {
         if (response && response.status === 200) return response && response.data;
 
     } catch (error) {
-        log("error", "controller", "getDinnerMenuController", error && error.message, "menuController.js");
+        log("error", "controller", "getDinnerMenuController", error, "menuController.js");
         return ERROR_STATUS.ERROR;
     }
 }
