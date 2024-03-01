@@ -44,8 +44,6 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
     const [vegMenu, setVegMenu] = React.useState<MenuCategory[]>([]);
     const [nonVegMenu, setNonVegMenu] = React.useState<MenuCategory[]>([]);
 
-    console.log(JSON.stringify(specialMenu, null, 2));
-
     React.useEffect(() => {
         console.log(specialMenu);
         const vegMenu = specialMenu && specialMenu?.map(category => ({

@@ -1,82 +1,22 @@
-import {useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
-import {useToast} from "../helpers/toast/Toast";
 import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 import {useErrorContext} from "../context/ErrorContext";
 
 export default function useMenuHook() {
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(null);
     const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(null);
-    const [packetLimit, setPacketLimit] = useState(false);
+    const [packetLimit, setPacketLimit] = useState(null);
     const [isLunchHook, setIsLunchHook] = useState(false);
     const [orderTypeHook, setOrderTypeHook] = useState("vegi");
     const {showError} = useErrorContext();
 
-    const {showToast} = useToast();
-
-    useEffect(() => {
-
-    }, [isLunchHook, setIsLunchHook, orderTypeHook, setOrderTypeHook]);
-
-
-    useEffect(() => {
-        fetchDisableLunchCheckbox().catch((error) => console.log(error.message));
-        fetchDisableDinnerCheckbox().catch((error) => console.log(error.message));
-
-    }, [disableLunchCheckbox, disableDinnerCheckbox]);
-
-    const fetchDisableLunchCheckbox = async () => {
+    const checkPacketLimit = useCallback(async (isLunch, isVeg, isSpecial, ids) => {
         try {
             const token = await getDataFromLocalStorage('token');
             if (!token) {
-                return;
-            }
-
-            const result = await lunchBucketAPI.get("checkmealstatus/Lunch", {
-                headers: {
-                    'token': token,
-                }
-            });
-
-            if (result && result.data && result.data.data && result.data.data.state) {
-                setDisableLunchCheckbox(false);
-            }
-
-        } catch (e) {
-            setDisableLunchCheckbox(true);
-            console.log(e.message);
-        }
-    }
-
-    const fetchDisableDinnerCheckbox = async () => {
-        try {
-            const token = await getDataFromLocalStorage('token')
-            if (!token) {
-                return;
-            }
-
-            const result = await lunchBucketAPI.get("checkmealstatus/Dinner", {
-                headers: {
-                    'token': token,
-                }
-            });
-
-            if (result && result.data && result.data.data && result.data.data.state) {
-                setDisableDinnerCheckbox(false);
-            }
-
-        } catch (e) {
-            setDisableDinnerCheckbox(true);
-            console.log(e.message);
-        }
-    }
-
-    const checkPacketLimit = async (isLunch, isVeg, isSpecial, ids) => {
-        try {
-            const token = await getDataFromLocalStorage('token');
-            if (!token) {
-                setPacketLimit(true);
-                return;
+                setPacketLimit(false);
+                return false;
             }
 
             const result = await lunchBucketAPI.post("checkpacketlimit", {
@@ -91,23 +31,23 @@ export default function useMenuHook() {
                 },
             );
 
-            console.log(result?.data?.data);
-            if (result?.data?.data) {
-                setPacketLimit(!(result?.data?.data?.state));
+            console.log(result && result.data);
+            if (result && result.data && result.data.data && result?.data?.data) {
+                setPacketLimit(result && result.data && result.data.data && result?.data?.data?.state);
+                console.log(result && result.data && result.data.data && result?.data?.data?.state);
+                return (result && result.data && result.data.data && result?.data?.data?.state);
             }
 
         } catch (e) {
-            console.log(e?.response?.data?.data?.message);
             showError(e && e.response && e.response.data && e.response.data.data && e?.response?.data?.data?.message);
-            // showToast('error', e && e.response && e.response.data && e.response.data.data && e?.response?.data?.data?.message);
+            setPacketLimit(true);
+            return true;
         }
-    }
+    }, []);
 
     return {
         disableLunchCheckbox,
         disableDinnerCheckbox,
-        fetchDisableLunchCheckbox,
-        fetchDisableDinnerCheckbox,
         checkPacketLimit,
         isLunchHook,
         setIsLunchHook,

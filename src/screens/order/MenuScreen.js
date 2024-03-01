@@ -29,7 +29,6 @@ import {
     fetchMenuPercentageLunchForThreeIDs,
     fetchMenuPercentageLunchForTwoIDs
 } from "../../redux/menuPercentageSlice";
-import useMenuHook from "../../services/useMenuHook";
 import specialMenu from "../../components/menu/SpecialMenu";
 import UpdateAppModal from "../../components/modals/UpdateAppModal";
 import useAppUpdateHook from "../../services/useAppUpdateHook";
@@ -45,7 +44,7 @@ export default function MenuScreen({route}) {
     const menuPercentageLunchForTwoIDs = useSelector(state => state.menuPercentage.menuPercentageLunchForTwoIDs);
     const menuPercentageDinnerForThreeIDs = useSelector(state => state.menuPercentage.menuPercentageDinnerForThreeIDs);
     const menuPercentageLunchForThreeIDs = useSelector(state => state.menuPercentage.menuPercentageLunchForThreeIDs);
-    const {menuLimits} = useMenuContext();
+    const {menuLimits, isLunchDisable, fetchDisableLunchCheckbox} = useMenuContext();
 
     const dispatch = useDispatch();
     const [selectedItems, setSelectedItems] = useState([]);
@@ -77,12 +76,6 @@ export default function MenuScreen({route}) {
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
     const {showError} = useErrorContext();
 
-    const {
-        disableLunchCheckbox,
-        disableDinnerCheckbox,
-        fetchDisableLunchCheckbox,
-        fetchDisableDinnerCheckbox,
-    } = useMenuHook();
 
     const {isUpdateModalVisible, setIsUpdateModalVisible, fetchUpdateStatus} = useAppUpdateHook();
     const {fetchPromotion, setIsPromotionModalVisible, isPromotionModalVisible} = usePromotionHook();
@@ -295,17 +288,17 @@ export default function MenuScreen({route}) {
     };
 
     const lunchItemList = [
-        createItemListWithType("Rice", lunchRiceItems, setLunchRiceItems, 1, disableLunchCheckbox),
-        createItemListWithType("Vegetables", lunchVegetableItems, setLunchVegetableItems, 2, disableLunchCheckbox),
-        createItemListWithType("Condiments", lunchStewItems, setLunchStewItems, 1, disableLunchCheckbox),
-        createItemListWithType("Meat", lunchMeatItems, setLunchMeatItems, 1, disableLunchCheckbox),
+        createItemListWithType("Rice", lunchRiceItems, setLunchRiceItems, 1, isLunchDisable),
+        createItemListWithType("Vegetables", lunchVegetableItems, setLunchVegetableItems, 2, isLunchDisable),
+        createItemListWithType("Condiments", lunchStewItems, setLunchStewItems, 1, isLunchDisable),
+        createItemListWithType("Meat", lunchMeatItems, setLunchMeatItems, 1, isLunchDisable),
     ];
 
     const dinnerItemList = [
-        createItemListWithType("Rice", dinnerRiceItems, setDinnerRiceItems, 1, disableDinnerCheckbox),
-        createItemListWithType("Vegetables", dinnerVegetableItems, setDinnerVegetableItems, 2, disableDinnerCheckbox),
-        createItemListWithType("Condiments", dinnerStewItems, setDinnerStewItems, 1, disableDinnerCheckbox),
-        createItemListWithType("Meat", dinnerMeatItems, setDinnerMeatItems, 1, disableDinnerCheckbox),
+        createItemListWithType("Rice", dinnerRiceItems, setDinnerRiceItems, 1, !isLunchDisable),
+        createItemListWithType("Vegetables", dinnerVegetableItems, setDinnerVegetableItems, 2, !isLunchDisable),
+        createItemListWithType("Condiments", dinnerStewItems, setDinnerStewItems, 1, !isLunchDisable),
+        createItemListWithType("Meat", dinnerMeatItems, setDinnerMeatItems, 1, !isLunchDisable),
     ];
 
     const getTotalCheckedItemsCount = (itemLists) => {
@@ -404,7 +397,7 @@ export default function MenuScreen({route}) {
     const handleDisabledMenu = async () => {
         try {
             await fetchDisableLunchCheckbox();
-            await fetchDisableDinnerCheckbox();
+
         } catch (error) {
             log('error', 'MenuScreen', 'handleDisabledMenu', error.message, 'MenuScreen.js');
         }
@@ -535,7 +528,7 @@ export default function MenuScreen({route}) {
                 log('error', 'MenuScreen', 'useEffect 3', error.message, 'MenuScreen.js');
             }
         );
-    }, [isLunch, disableLunchCheckbox, disableDinnerCheckbox]);
+    }, [isLunch, isLunchDisable]);
 
     useEffect(() => {
     }, [specialMenu]);
@@ -556,7 +549,7 @@ export default function MenuScreen({route}) {
                 </View>
                 <View style={styles.bodyContainer}>
                     <Timer title={isLunch ? "Lunch" : "Dinner"}
-                           disableTime={isLunch ? disableLunchCheckbox : disableDinnerCheckbox} isLoading={false}/>
+                           disableTime={isLunch ? isLunchDisable : !isLunchDisable} isLoading={false}/>
                     <Menu
                         loading={loading}
                         isLunch={isLunch}
@@ -574,7 +567,7 @@ export default function MenuScreen({route}) {
                         totalCheckedItems={isLunch ? getTotalCheckedItems(lunchItemList) : getTotalCheckedItems(dinnerItemList)}
                         totalCheckedSpecialItems={isLunch ? getTotalCheckedSpecialItems(lunchSpecialItems) : getTotalCheckedSpecialItems(dinnerSpecialItems)}
                         totalAmount={isLunch ? lunchTotalPrice : dinnerTotalPrice}
-                        disableTime={isLunch ? disableLunchCheckbox : disableDinnerCheckbox}
+                        disableTime={isLunch ? isLunchDisable : !isLunchDisable}
                         onRefresh={onRefresh}
                         refreshing={refreshing}
                         isEditMenu={isEditMenu}

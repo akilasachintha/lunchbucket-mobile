@@ -8,7 +8,6 @@ import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/stor
 import {log} from "../../helpers/logs/log";
 import {handleCheckoutService} from "../../services/checkoutService";
 import {ERROR_STATUS} from "../../errorLogs/errorStatus";
-import {useToast} from "../../helpers/toast/Toast";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import {getUserPointsService} from "../../services/userProfileService";
@@ -30,13 +29,10 @@ export default function Checkout() {
     const [isPointsApplied, setIsPointsApplied] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const {showError} = useErrorContext();
-    const {showToast} = useToast();
 
     const {
-        disableLunchCheckbox,
-        disableDinnerCheckbox,
+        isLunchDisable,
         fetchDisableLunchCheckbox,
-        fetchDisableDinnerCheckbox
     } = useMenuContext();
 
     const fetchCheckout = async () => {
@@ -67,23 +63,22 @@ export default function Checkout() {
             if (!basketItems) return;
 
             await fetchDisableLunchCheckbox();
-            await fetchDisableDinnerCheckbox();
 
             basketItems = JSON.parse(basketItems);
 
-            if (disableLunchCheckbox == null || disableDinnerCheckbox == null) {
+            if (isLunchDisable == null) {
                 setIsPlacingOrder(false);
                 setIsButtonDisabled(false);
                 setIsLoading(false);
             }
 
-            if (disableLunchCheckbox && basketItems.venue === 'Lunch') {
+            if (isLunchDisable && basketItems.venue === 'Lunch') {
                 showError('You cannot order lunch at this time.');
                 setIsPlacingOrder(false);
                 return;
             }
 
-            if (disableDinnerCheckbox && basketItems.venue === 'Dinner') {
+            if (!isLunchDisable && basketItems.venue === 'Dinner') {
                 showError('You cannot order dinner at this time.');
                 setIsPlacingOrder(false);
                 return;

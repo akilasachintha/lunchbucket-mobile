@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useContext, useEffect} from 'react';
+import React, {createContext, ReactNode, useCallback, useContext, useEffect} from 'react';
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {auth2API, projectCode} from "../apis/lunchBucketAPI";
 
@@ -35,13 +35,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
     const [notifications, setNotifications] = React.useState<INotification[]>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-    useEffect(() => {
-        setIsLoading(true);
-        fetchNotifications().catch((error) => console.error('Error fetching notifications:', error));
-        setIsLoading(false);
-    }, []);
-
-    const fetchNotifications = async () => {
+    const fetchNotifications = useCallback(async () => {
         try {
             setIsLoading(true);
             const token = await getDataFromLocalStorage('token');
@@ -68,7 +62,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
             console.log(error);
             setIsLoading(false);
         }
-    }
+    }, [setIsLoading, setNotifications]);
 
     const changeNotificationViewState = async () => {
         try {
@@ -148,6 +142,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({child
             setIsLoading(false);
         }
     }
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchNotifications().catch((error) => console.error('Error fetching notifications:', error));
+        setIsLoading(false);
+    }, [fetchNotifications]);
 
     return (
         <NotificationContext.Provider

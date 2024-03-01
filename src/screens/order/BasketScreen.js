@@ -32,11 +32,8 @@ export default function BasketScreen() {
     const {showError} = useErrorContext();
 
     const {
-        disableLunchCheckbox,
-        disableDinnerCheckbox,
-        isLunch,
+        isLunchDisable,
         fetchDisableLunchCheckbox,
-        fetchDisableDinnerCheckbox,
     } = useMenuContext();
 
     useEffect(() => {
@@ -53,11 +50,7 @@ export default function BasketScreen() {
             log("error", "BasketScreen", "useEffect | fetchDisableLunchCheckbox", error.message, "BasketScreen.js")
         );
 
-        fetchDisableDinnerCheckbox().catch((error) =>
-            log("error", "BasketScreen", "useEffect | fetchDisableDinnerCheckbox", error.message, "BasketScreen.js")
-        );
-
-    }, [disableLunchCheckbox, disableDinnerCheckbox]);
+    }, [fetchDisableLunchCheckbox]);
 
     const navigation = useNavigation();
     const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
@@ -109,12 +102,9 @@ export default function BasketScreen() {
             if (isSubmit) return;
             setIsButtonLoading(true);
 
-            await fetchDisableDinnerCheckbox();
             await fetchDisableLunchCheckbox();
 
-            console.log(disableLunchCheckbox, disableDinnerCheckbox, isLunch);
-
-            if (disableLunchCheckbox == null || disableDinnerCheckbox == null || isLunch == null) {
+            if (isLunchDisable == null) {
                 setIsButtonLoading(false);
                 setIsLoading(false);
             }
@@ -140,7 +130,7 @@ export default function BasketScreen() {
                 return;
             }
 
-            if (isLunch && isDinnerItems.length !== 0) {
+            if (!isLunchDisable && isDinnerItems.length !== 0) {
                 basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Dinner");
                 await addDataToLocalStorage("basket", JSON.stringify(basket));
                 await fetchBasket();
@@ -149,7 +139,7 @@ export default function BasketScreen() {
                 return;
             }
 
-            if (!isLunch && isLunchItems.length !== 0) {
+            if (isLunchDisable && isLunchItems.length !== 0) {
                 basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Lunch");
                 await addDataToLocalStorage("basket", JSON.stringify(basket));
                 await fetchBasket();

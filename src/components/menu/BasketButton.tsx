@@ -4,9 +4,9 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {setMenuBasketService, updateBasketFromId} from '../../services/menuService';
 import {useToast} from '../../helpers/toast/Toast';
 import {useSelector} from "react-redux";
-import useMenuHook from "../../services/useMenuHook";
 import {useMenuContext} from "../../context/MenuContext";
 import {useErrorContext} from "../../context/ErrorContext";
+import useMenuHook from "../../services/useMenuHook";
 
 interface BasketButtonProps {
     totalCheckedItemsCount: number;
@@ -41,23 +41,9 @@ const BasketButton: React.FC<BasketButtonProps> = ({
     const isEditMenu = useSelector((state: any) => state.menu.isEditMenu);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const {menuLimits} = useMenuContext();
+    const {menuLimits, fetchDisableLunchCheckbox, isLunchDisable} = useMenuContext();
     const {showError} = useErrorContext();
-
-    const {
-        packetLimit,
-        checkPacketLimit,
-    } = useMenuHook();
-
-    const {
-        isLunch,
-        disableDinnerCheckbox,
-        disableLunchCheckbox,
-        fetchDisableLunchCheckbox,
-        fetchDisableDinnerCheckbox,
-        getDisableLunchCheckbox,
-        getDisableDinnerCheckbox,
-    } = useMenuContext();
+    const {packetLimit, checkPacketLimit} = useMenuHook();
 
     const handleBasketPress = async () => {
         setIsLoading(true);
@@ -74,136 +60,136 @@ const BasketButton: React.FC<BasketButtonProps> = ({
             }
 
             await fetchDisableLunchCheckbox();
-            await fetchDisableDinnerCheckbox();
 
-            if (disableLunchCheckbox === null || disableDinnerCheckbox === null || isLunch === null) {
+            if (isLunchDisable === null) {
                 setIsLoading(false);
                 setIsButtonDisabled(false);
                 return;
-            }
+            } else {
+                const isSpecial = totalCheckedSpecialItemsCount > 0;
+                const ids = totalCheckedSpecialItems.map(item => item.id);
 
-            const isSpecial = totalCheckedSpecialItemsCount > 0;
-            const ids = totalCheckedSpecialItems.map(item => item.id);
+                if (totalCheckedSpecialItemsCount > 0 || totalCheckedItemsCount > 0) {
+                    const limit = await checkPacketLimit(!isLunchDisable, isVeg, isSpecial, ids);
 
-            if (totalCheckedSpecialItemsCount > 0 || totalCheckedItemsCount > 0) {
-                await checkPacketLimit(isLunch, isVeg, isSpecial, ids);
-            }
-
-            if ((totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && packetLimit) {
-                setIsLoading(false);
-                return;
-            }
-
-            if (venue === 'Lunch' && disableLunchCheckbox) {
-                // showToast('error', 'Sorry, Lunch time exceeded.');
-                showError('Sorry, Lunch time exceeded.');
-                setIsLoading(false);
-                return;
-            }
-
-            if (venue === 'Dinner' && disableDinnerCheckbox) {
-                // showToast('error', 'Sorry, Dinner time exceeded.');
-                showError('Sorry, Dinner time exceeded.');
-                setIsLoading(false);
-                return;
-            }
-
-            if (isEditMenu) {
-                totalCheckedSpecialItemsCount = 0;
-            }
-
-            const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
-            const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
-
-            if (venue === 'Lunch' && !(hasCheckedLunchRiceItem) && !isSpecial) {
-                // showToast('error', `Need to select one rice item.`);
-                showError('Need to select one rice item.');
-                setIsLoading(false);
-                return;
-            }
-
-            if (venue === 'Dinner' && !(hasCheckedDinnerRiceItem) && !isSpecial) {
-                // showToast('error', `Need to select one rice item.`);
-                showError('Need to select one rice item.');
-                setIsLoading(false);
-                return;
-            }
-
-            if (totalCheckedItemsCount > (menuLimits != null ? menuLimits.limits.max : 6)) {
-                // showToast('error', `You can select only ${menuLimits?.limits.max} dishes.`);
-                showError(`You can select only ${menuLimits?.limits.max} dishes.`);
-                setIsLoading(false);
-                return;
-            }
-
-            if (totalCheckedSpecialItemsCount === 0 && totalCheckedItemsCount === 0) {
-
-                // @ts-ignore
-                navigation.navigate('Basket');
-                setIsLoading(false);
-                return;
-            }
-
-            if (totalCheckedSpecialItemsCount > 0 && totalCheckedItemsCount <= 0) {
-                // Handle special meals
-                const basketItems = totalCheckedSpecialItems && totalCheckedSpecialItems.filter(item => item.checked === true);
-
-                try {
-                    if (isEditMenu && mealId > 0) {
-                        await updateBasketFromId(mealId, basketItems);
-                        showToast('success', 'Basket updated successfully');
-
-                        // @ts-ignore
-                        navigation.navigate('Basket');
-                    } else {
-                        await setMenuBasketService(basketItems, totalAmount, venue, isVeg, true);
-
-                        // @ts-ignore
-                        navigation.navigate('Basket');
+                    if (limit) {
+                        setIsLoading(false);
+                        setIsButtonDisabled(false);
+                        return;
                     }
-                } catch (error) {
-                    console.error('Error updating basket:', error);
                 }
-            }
 
-            if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.max : 6))) {
-                // Handle normal meals
-                const basketItems = totalCheckedItems && totalCheckedItems.filter(item => item.checked === true);
+                if (venue === 'Lunch' && isLunchDisable) {
+                    // showToast('error', 'Sorry, Lunch time exceeded.');
+                    showError('Sorry, Lunch time exceeded.');
+                    setIsLoading(false);
+                    return;
+                }
 
-                try {
-                    if (isEditMenu && mealId > 0) {
-                        await updateBasketFromId(mealId, basketItems);
-                        showToast('success', 'Basket updated successfully');
+                if (venue === 'Dinner' && !isLunchDisable) {
+                    // showToast('error', 'Sorry, Dinner time exceeded.');
+                    showError('Sorry, Dinner time exceeded.');
+                    setIsLoading(false);
+                    return;
+                }
 
-                        // @ts-ignore
-                        navigation.navigate('Basket');
+                if (isEditMenu) {
+                    totalCheckedSpecialItemsCount = 0;
+                }
 
-                    } else if (totalCheckedItemsCount >= (menuLimits != null ? menuLimits.limits.min : 4) && totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.max : 6)) {
-                        await setMenuBasketService(basketItems, totalAmount, venue, isVeg, false);
+                const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
+                const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
-                        // @ts-ignore
-                        navigation.navigate('Basket');
-                    } else {
-                        showError(`Please select at least ${menuLimits && menuLimits.limits && menuLimits?.limits.min} items to proceed.`);
-                        // showToast('error', `Please select at least ${menuLimits && menuLimits.limits && menuLimits?.limits.min} items to proceed.`);
+                if (venue === 'Lunch' && !(hasCheckedLunchRiceItem) && !isSpecial) {
+                    // showToast('error', `Need to select one rice item.`);
+                    showError('Need to select one rice item.');
+                    setIsLoading(false);
+                    return;
+                }
+
+                if (venue === 'Dinner' && !(hasCheckedDinnerRiceItem) && !isSpecial) {
+                    // showToast('error', `Need to select one rice item.`);
+                    showError('Need to select one rice item.');
+                    setIsLoading(false);
+                    return;
+                }
+
+                if (totalCheckedItemsCount > (menuLimits != null ? (menuLimits && menuLimits.limits && menuLimits.limits.max) : 6)) {
+                    // showToast('error', `You can select only ${menuLimits?.limits.max} dishes.`);
+                    showError(`You can select only ${menuLimits && menuLimits.limits && menuLimits?.limits.max} dishes.`);
+                    setIsLoading(false);
+                    return;
+                }
+
+                if (totalCheckedSpecialItemsCount === 0 && totalCheckedItemsCount === 0) {
+
+                    // @ts-ignore
+                    navigation.navigate('Basket');
+                    setIsLoading(false);
+                    return;
+                }
+
+                if (totalCheckedSpecialItemsCount > 0 && totalCheckedItemsCount <= 0) {
+                    // Handle special meals
+                    const basketItems = totalCheckedSpecialItems && totalCheckedSpecialItems.filter(item => item.checked === true);
+
+                    try {
+                        if (isEditMenu && mealId > 0) {
+                            await updateBasketFromId(mealId, basketItems);
+                            showToast('success', 'Basket updated successfully');
+
+                            // @ts-ignore
+                            navigation.navigate('Basket');
+                        } else {
+                            await setMenuBasketService(basketItems, totalAmount, venue, isVeg, true);
+
+                            // @ts-ignore
+                            navigation.navigate('Basket');
+                        }
+                    } catch (error) {
+                        console.error('Error updating basket:', error);
                     }
-                } catch (error) {
-                    console.error('Error updating basket:', error);
                 }
-            }
 
-            if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.min : 4) && totalCheckedItemsCount >= (menuLimits != null ? menuLimits.limits.max : 6))) {
-                console.log("New");
-                // showToast('error', `Please select ${menuLimits && menuLimits.limits && menuLimits?.limits.max} items to proceed.`);
-                showError(`Please select ${menuLimits && menuLimits.limits && menuLimits?.limits.max} items to proceed.`);
+                if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.max : 6))) {
+                    // Handle normal meals
+                    const basketItems = totalCheckedItems && totalCheckedItems.filter(item => item.checked === true);
+
+                    try {
+                        if (isEditMenu && mealId > 0) {
+                            await updateBasketFromId(mealId, basketItems);
+                            showToast('success', 'Basket updated successfully');
+
+                            // @ts-ignore
+                            navigation.navigate('Basket');
+
+                        } else if (totalCheckedItemsCount >= (menuLimits != null ? menuLimits.limits.min : 4) && totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.max : 6)) {
+                            await setMenuBasketService(basketItems, totalAmount, venue, isVeg, false);
+
+                            // @ts-ignore
+                            navigation.navigate('Basket');
+                        } else {
+                            showError(`Please select at least ${menuLimits && menuLimits.limits && menuLimits?.limits.min} items to proceed.`);
+                            // showToast('error', `Please select at least ${menuLimits && menuLimits.limits && menuLimits?.limits.min} items to proceed.`);
+                        }
+                    } catch (error) {
+                        console.error('Error updating basket:', error);
+                    }
+                }
+
+                if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount <= (menuLimits != null ? menuLimits.limits.min : 4) && totalCheckedItemsCount >= (menuLimits != null ? menuLimits.limits.max : 6))) {
+                    console.log("New");
+                    // showToast('error', `Please select ${menuLimits && menuLimits.limits && menuLimits?.limits.max} items to proceed.`);
+                    showError(`Please select ${menuLimits && menuLimits.limits && menuLimits?.limits.max} items to proceed.`);
+                    setIsLoading(false);
+                }
+
+                setTimeout(() => {
+                    setIsButtonDisabled(false);
+                }, 1000);
+
                 setIsLoading(false);
             }
-
-            setTimeout(() => {
-                setIsButtonDisabled(false);
-            }, 1000);
-
-            setIsLoading(false);
         } catch (error) {
             console.error('Error handling basket press:', error);
             setIsLoading(false);
