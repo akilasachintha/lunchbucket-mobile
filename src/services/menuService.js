@@ -60,20 +60,24 @@ export async function getLunchSpecialMenuService(lunchMenu) {
         if (!result) {
             return [];
         } else {
-            return result && !isEmptyArray(result.special_menu_lunch) && result.special_menu_lunch && result.special_menu_lunch.map((item) => {
-                const categoryWithChecked = item && !isEmptyArray(item.category) && item.category.map((categoryItem) => ({
-                    ...categoryItem,
-                    checked: false,
-                }));
+            if (result && result.special_menu_lunch && isEmptyArray(result.special_menu_lunch)) {
+                return [];
+            } else {
+                return result && !isEmptyArray(result.special_menu_lunch) && result.special_menu_lunch && result.special_menu_lunch.map((item) => {
+                    const categoryWithChecked = item && !isEmptyArray(item.category) && item.category.map((categoryItem) => ({
+                        ...categoryItem,
+                        checked: false,
+                    }));
 
-                return {
-                    ...item,
-                    category: categoryWithChecked,
-                    disableCheckbox: true,
-                    foodType: 'Special',
-                    percentage: 0,
-                };
-            });
+                    return {
+                        ...item,
+                        category: categoryWithChecked,
+                        disableCheckbox: true,
+                        foodType: 'Special',
+                        percentage: 0,
+                    };
+                });
+            }
         }
     } catch (error) {
         log("error", "service", "getLunchSpecialMenuService", error.message, "menuService.js");

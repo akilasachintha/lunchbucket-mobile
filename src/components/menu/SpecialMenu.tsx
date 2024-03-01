@@ -44,15 +44,17 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
     const [vegMenu, setVegMenu] = React.useState<MenuCategory[]>([]);
     const [nonVegMenu, setNonVegMenu] = React.useState<MenuCategory[]>([]);
 
+    console.log(JSON.stringify(specialMenu, null, 2));
+
     React.useEffect(() => {
         console.log(specialMenu);
-        const vegMenu = specialMenu?.map(category => ({
+        const vegMenu = specialMenu && specialMenu?.map(category => ({
             ...category,
             category: category.category.filter((item: any) => item.vegetarian)
         })).filter(category => category.category.length > 0);
         setVegMenu(vegMenu);
 
-        const nonVegMenu = specialMenu?.map(category => ({
+        const nonVegMenu = specialMenu && specialMenu?.map(category => ({
             ...category,
             category: category.category.filter((item: any) => !item.vegetarian)
         })).filter(category => category.category.length > 0);
@@ -239,8 +241,7 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
 
                                 {item && item.category && item.category_name === 'Lunch Bucket Authentic' && (
                                     <EveningOnlyComponent/>
-                                )
-                                }
+                                )}
 
                                 {item && item.category && !isEmptyArray(item.category) && item.category.length > 0 && item.category.map((subItem, subIndex) => (
                                     <View key={subIndex} style={styles.specialMenuCategoryContainer}>
@@ -325,6 +326,14 @@ const SpecialMenu: React.FC<SpecialMenuProps> = ({
                         </View>
                     </View>
                 ))}
+
+                {
+                    specialMenu && isEmptyArray(specialMenu) && (
+                        <View style={styles.noItems}>
+                            <Text>No Special Items</Text>
+                        </View>
+                    )
+                }
             </View>
         </View>
     );
@@ -572,6 +581,12 @@ const styles = StyleSheet.create({
         marginBottom: "2%",
         color: 'rgb(178,8,8)',
         paddingVertical: "2%",
+    },
+    noItems: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        height: 100,
     },
 });
 
