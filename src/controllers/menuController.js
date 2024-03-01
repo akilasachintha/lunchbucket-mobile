@@ -17,6 +17,7 @@ export async function getLunchMenuController() {
             }
         });
 
+        console.log(response.data);
         if (response && response.status === 200) {
             return response && response.data;
         } else {

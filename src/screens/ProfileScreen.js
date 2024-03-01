@@ -10,6 +10,7 @@ import {logoutService} from '../services/authService';
 import DynamicTopBar from '../components/topBar/DynamicTopBar';
 import {SelectedTab} from '../helpers/enums/enums';
 import TopHeader from "../components/topHeader/TopHeader";
+import ConfirmDeleteAccountModal from "../components/modals/ConfirmDeleteAccountModal";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -19,6 +20,7 @@ export default function ProfileScreen() {
     const navigation = useNavigation();
     const [userData, setUserData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const initialValues = {
         email: '',
@@ -33,6 +35,10 @@ export default function ProfileScreen() {
         await logoutService();
         navigation.navigate('Initial');
     };
+
+    const handleDelete = async () => {
+        setIsModalVisible(true);
+    }
 
     const fetchUserData = async () => {
         try {
@@ -152,9 +158,24 @@ export default function ProfileScreen() {
                                     </View>
                                 </TouchableOpacity>
                             </View>
+                            <View style={styles.bottomButtonsDelete}>
+                                <TouchableOpacity onPress={handleDelete}>
+                                    <View style={styles.deleteButton}>
+                                        <Text style={styles.deleteText}>Delete Your Account</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     )}
                 </Formik>
+                {
+                    isModalVisible && (
+                        <ConfirmDeleteAccountModal
+                            isModalVisible={isModalVisible}
+                            setIsModalVisible={setIsModalVisible}
+                        />
+                    )
+                }
             </View>
         </SafeAreaView>
     );
@@ -233,7 +254,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#9d0221',
     },
     bottomButtons: {
-        marginBottom: "10%",
+        marginBottom: "5%",
     },
     settingsButton: {
         backgroundColor: 'rgb(178,8,8)',
@@ -254,8 +275,25 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
     },
+    bottomButtonsDelete: {
+        marginBottom: "10%",
+    },
     settingsText: {
         color: '#630A10',
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
+    deleteButton: {
+        backgroundColor: '#630A10',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        paddingVertical: "3%",
+        marginHorizontal: "8%",
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    deleteText: {
+        color: '#fad764',
         fontWeight: 'bold',
         fontSize: 20,
     },
