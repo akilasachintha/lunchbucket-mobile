@@ -71,6 +71,7 @@ const BasketButton: React.FC<BasketButtonProps> = ({
 
                 if (totalCheckedSpecialItemsCount > 0 || totalCheckedItemsCount > 0) {
                     const limit = await checkPacketLimit(!isLunchDisable, isVeg, isSpecial, ids);
+                    console.log('limit', limit);
 
                     if (limit) {
                         setIsLoading(false);

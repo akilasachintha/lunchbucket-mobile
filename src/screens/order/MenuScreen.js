@@ -80,11 +80,6 @@ export default function MenuScreen({route}) {
     const {isUpdateModalVisible, setIsUpdateModalVisible, fetchUpdateStatus} = useAppUpdateHook();
     const {fetchPromotion, setIsPromotionModalVisible, isPromotionModalVisible} = usePromotionHook();
 
-    useEffect(() => {
-        fetchUpdateStatus().catch(e => console.log(e));
-        fetchPromotion().catch(e => console.log(e));
-    }, [isPromotionModalVisible]);
-
     const fetchMealById = async (mealId) => {
         const result = await getByMealIdFromBasketService(mealId);
 
@@ -260,7 +255,6 @@ export default function MenuScreen({route}) {
                         setSelectedItems([...selectedItems, newItems[index]]);
                         newItems[index].checked = true;
                     } else if (type === "Rice" && itemCount > 0) {
-                        // showToast('error', `You can select one rice item only.`);
                         showError(`You can select one rice item only.`);
                         return;
                     }
@@ -268,12 +262,10 @@ export default function MenuScreen({route}) {
                     const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
                     const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
-                    if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1 || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1)) {
-                        // showToast('error', `Need to select one rice item for proceeding.`);
+                    if (menuLimits && menuLimits.limits && (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1 || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.min) - 1))) {
                         showError(`Need to select one rice item for proceeding.`);
                         return;
-                    } else if ((totalCheckedLunchItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) - 1)) {
-                        // showToast('error', `You can select up to ${menuLimits && menuLimits.limits && menuLimits.limits.max} dishes only.`);
+                    } else if (menuLimits && menuLimits.limits && ((totalCheckedLunchItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) || totalCheckedDinnerItemsCount >= (menuLimits && menuLimits.limits && menuLimits.limits.max) - 1))) {
                         showError(`You can select up to ${menuLimits && menuLimits.limits && menuLimits.limits.max} dishes only.`);
                         return;
                     } else {
@@ -281,6 +273,7 @@ export default function MenuScreen({route}) {
                         setSelectedItems([...selectedItems, newItems[index]]);
                     }
             }
+
             setItems(newItems);
         };
 
@@ -532,6 +525,11 @@ export default function MenuScreen({route}) {
 
     useEffect(() => {
     }, [specialMenu]);
+
+    useEffect(() => {
+        fetchUpdateStatus().catch(e => console.log(e));
+        fetchPromotion().catch(e => console.log(e));
+    }, [isPromotionModalVisible]);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>

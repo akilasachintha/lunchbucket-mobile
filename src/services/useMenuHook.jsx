@@ -31,11 +31,11 @@ export default function useMenuHook() {
                 },
             );
 
-            console.log(result && result.data);
+            console.log("Check Packet Limit", result && result.data);
             if (result && result.data && result.data.data && result?.data?.data) {
                 setPacketLimit(result && result.data && result.data.data && result?.data?.data?.state);
-                console.log(result && result.data && result.data.data && result?.data?.data?.state);
-                return (result && result.data && result.data.data && result?.data?.data?.state);
+                console.log((result && result.data && result.data.data && result?.data?.data?.state));
+                return (!(result && result.data && result.data.data && result?.data?.data?.state));
             }
 
         } catch (e) {
@@ -43,7 +43,7 @@ export default function useMenuHook() {
             setPacketLimit(true);
             return true;
         }
-    }, []);
+    }, [showError]);
 
     return {
         disableLunchCheckbox,

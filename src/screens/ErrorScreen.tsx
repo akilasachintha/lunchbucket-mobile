@@ -14,21 +14,22 @@ const ErrorScreen: React.FC = () => {
         console.log('Error closed');
     }
 
+    const handleBackgroundTouch = () => {
+        handleClose();
+    };
+
     return (
-        <TouchableOpacity style={styles.container}>
+        <View style={styles.container} onTouchEnd={handleBackgroundTouch}>
             <View style={styles.loading}>
-                <TouchableOpacity onPress={handleClose}
-                                  style={styles.closeButton}>
+                <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                     <Icon name="close" size={24} color="#630A10"/>
                 </TouchableOpacity>
-                <ImageBackground source={PATHS.error}
-                                 imageStyle={styles.image}
-                                 style={styles.imageContainer}>
+                <ImageBackground source={PATHS.error} imageStyle={styles.image} style={styles.imageContainer}>
                     <Text style={styles.title}>Oops!</Text>
                     <Text style={styles.text}>{errorMessage}</Text>
                 </ImageBackground>
             </View>
-        </TouchableOpacity>
+        </View>
     );
 };
 
@@ -56,7 +57,8 @@ const styles = StyleSheet.create({
     closeButton: {
         position: 'absolute',
         top: 10,
-        right: 10
+        right: 10,
+        zIndex: 1, // Ensure the button is above other elements
     },
     imageContainer: {
         width: '100%',
