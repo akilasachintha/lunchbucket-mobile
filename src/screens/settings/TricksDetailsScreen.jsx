@@ -20,10 +20,10 @@ export default function TricksDetailsScreen() {
                         <Text style={styles.info}>
                             Earn points with every order placed.{'\n'}
                             <Text style={{fontWeight: 'bold'}}>Points double for Lunch:</Text> Place a lunch order
-                            before 7 AM and receive double the points.{'\n'}
+                            before 10 AM and receive double the points.{'\n'}
                             This is a great way to kickstart your day with extra rewards!{'\n\n'}
                             <Text style={{fontWeight: 'bold'}}>Midday Reward:</Text> If you're planning for dinner,
-                            consider placing your order before 4.30 PM to enjoy the double points benefit.{'\n'}
+                            consider placing your order before 6 PM to enjoy the double points benefit.{'\n'}
                             It's our way of saying thank you for planning ahead.{'\n\n'}
                             <Text style={{fontWeight: 'bold'}}>Stay Updated:</Text> Regularly check our app or website
                             for special promotions and bonus point opportunities.{'\n\n'}

@@ -40,19 +40,25 @@ export default function DeliveryDetailsScreen() {
                         {/* Lunch Delivery Schedule Section */}
                         <Text style={styles.header}>☀️ Lunch Delivery Schedule</Text>
                         <Text style={styles.info}>
-                            <Text style={{fontWeight: 'bold'}}>7.30 PM - 7 AM:</Text> Place your order, Receive at 11 PM
-                            or
-                            12:30 PM.{'\n'}
-                            <Text style={{fontWeight: 'bold'}}>7 AM - 11 AM:</Text> Place your order, Receive at
-                            12:30 PM.{'\n'}
-                            <Text style={{fontWeight: 'bold'}}>11 AM - 12.30 PM:</Text> Place your order, Receive at
-                            2 PM{' '}
+                            <Text style={{fontWeight: 'bold'}}>9 PM - 10 AM:</Text> Place your order, Receive at 11
+                            AM or 12.30 PM{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>10 AM - 10.30 AM:</Text> Lunch orders will freeze (place
+                            just after 10:30 AM){'\n'}
+                            <Text style={{fontWeight: 'bold'}}>10.30 AM - 12 PM:</Text> Place your order, Receive at
+                            12.30 PM, 1 PM, 1.30 PM or 2 PM{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>12 PM - 12.30 PM:</Text> Place your order, Receive at
+                            1 PM, 1.30 PM or 2 PM{' '} (based on ordered time, can receive the order within 30
+                            minutes){'\n'}
+                            <Text style={{fontWeight: 'bold'}}>12.30 PM - 1 PM:</Text> Place your order, Receive at
+                            1.30 PM or 2 PM{' '} (based on ordered time, can receive the order within 30 minutes){'\n'}
+                            <Text style={{fontWeight: 'bold'}}>1 PM - 1.30 PM:</Text> Place your order, Receive at
+                            2 PM{' '} (based on ordered time, can receive the order within 30 minutes)
                         </Text>
 
                         {/* Authentic Delivery Schedule Section */}
                         <Text style={styles.header}>🌥️ Authentic Delivery Schedule</Text>
                         <Text style={styles.info}>
-                            <Text style={{fontWeight: 'bold'}}>12.30 PM - 2.30 PM:</Text> Place your order, Receive at
+                            <Text style={{fontWeight: 'bold'}}>1.30 PM - 2.30 PM:</Text> Place your order, Receive at
                             3.30 PM.{'\n'}
                             <Text style={{fontWeight: 'bold'}}>2.30 PM - 3.30pm:</Text> Place your order, Receive at
                             4:30 PM{'\n'}
@@ -63,10 +69,17 @@ export default function DeliveryDetailsScreen() {
                         {/* Dinner Delivery Schedule Section */}
                         <Text style={styles.header}>🌙 Dinner Delivery Schedule</Text>
                         <Text style={styles.info}>
-                            <Text style={{fontWeight: 'bold'}}>12.30 PM - 6 PM:</Text> Place your order, Receive at
+                            <Text style={{fontWeight: 'bold'}}>1.30 PM - 6 PM:</Text> Place your order, Receive at
                             7:30 PM. or 8.30 PM.{'\n'}
-                            <Text style={{fontWeight: 'bold'}}>6 PM - 7 PM:</Text> Place your order, Receive at
-                            8:30 PM{' '}
+                            <Text style={{fontWeight: 'bold'}}>6 PM - 6.30 PM:</Text> Dinner orders will freeze (place
+                            just after 6:30 PM){'\n'}
+                            <Text style={{fontWeight: 'bold'}}>6.30 PM - 8 PM:</Text> Place your order, Receive at
+                            8.30 PM, 9 PM, or 9.30 PM. (Based on ordered time, can receive the order within 30
+                            minutes){'\n'}
+                            <Text style={{fontWeight: 'bold'}}>8 PM - 8.30 PM:</Text> Place your order, Receive at
+                            9 PM or 9.30 PM. (Based on ordered time, can receive the order within 30 minutes){'\n'}
+                            <Text style={{fontWeight: 'bold'}}>8.30 PM - 9 PM:</Text> Place your order, Receive at
+                            9.30 PM. (Based on ordered time, can receive the order within 30 minutes){'\n'}
                         </Text>
 
                     </View>

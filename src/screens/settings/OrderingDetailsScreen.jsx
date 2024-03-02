@@ -19,18 +19,27 @@ export default function OrderingDetailsScreen() {
                         <Text style={styles.header}>⏳ Ordering Timing</Text>
 
                         <Text style={styles.info}>Place Lunch Orders between <Text
-                            style={{fontWeight: 'bold'}}>7:30 PM (Previous
-                            day)</Text> - <Text style={{fontWeight: 'bold'}}>12:30 PM</Text>, subject to
+                            style={{fontWeight: 'bold'}}>9:00 PM (Previous
+                            day)</Text> - <Text style={{fontWeight: 'bold'}}>1:30 PM</Text>, subject to
                             availability.</Text>
                         <Text style={styles.info}>Lunch Bucket Authentic foods can
                             be ordered between <Text
-                                style={{fontWeight: 'bold'}}>12:30 PM</Text> - <Text style={{fontWeight: 'bold'}}>4:30
+                                style={{fontWeight: 'bold'}}>1:30 PM</Text> - <Text style={{fontWeight: 'bold'}}>4:30
                                 PM</Text>.</Text>
                         <Text style={styles.info}>Dinner Orders are accepted
-                            from <Text style={{fontWeight: 'bold'}}>12:30
-                                PM</Text> - <Text style={{fontWeight: 'bold'}}>7:30 PM</Text>, based on
+                            from <Text style={{fontWeight: 'bold'}}>1:30
+                                PM</Text> - <Text style={{fontWeight: 'bold'}}>9:00 PM</Text>, based on
                             availability.</Text>
 
+                        <Text style={styles.infoNote}>Note</Text>
+                        <View style={{marginBottom: 20}}>
+                            <Text style={styles.infoRow}>Lunch Orders will freeze between
+                                <Text style={{fontWeight: 'bold'}}> 10 AM </Text> - <Text style={{fontWeight: 'bold'}}>10:30
+                                    AM</Text></Text>
+                            <Text style={styles.infoRow}>Dinner Orders will freeze between
+                                <Text style={{fontWeight: 'bold'}}> 6 PM </Text> - <Text style={{fontWeight: 'bold'}}>6:30
+                                    PM</Text></Text>
+                        </View>
 
                         {/* Meal Selection Section */}
                         <Text style={styles.header}>📝 Meal Selection</Text>
@@ -121,6 +130,13 @@ const styles = StyleSheet.create({
         color: '#4A5568',
         lineHeight: 24,
         marginBottom: 10,
+    },
+    infoNote: {
+        fontSize: 18,
+        marginTop: 10,
+        color: '#4A5568',
+        lineHeight: 24,
+        fontWeight: 'bold',
     },
     infoSub: {
         fontSize: 16,
